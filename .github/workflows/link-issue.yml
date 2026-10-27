@@ -1,0 +1,35 @@
+name: Link issue to pull request
+
+on:
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  link-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add issue number to PR description
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const match = pr.head.ref.match(/^[^/]+\/(\d+)(?:-|$)/);
+            if (!match) return;
+
+            const issue = `Closes #${match[1]}`;
+            const body = pr.body || '';
+            const marker = '**이슈 번호**:';
+            const line = `${marker} ${issue}`;
+            const updated = body.includes(marker)
+              ? body.replace(/^\*\*이슈 번호\*\*:.*$/m, line)
+              : `${body.trimEnd()}\n\n${line}`.trimStart();
+            if (updated === body) return;
+
+            await github.rest.pulls.update({
+              ...context.repo,
+              pull_number: pr.number,
+              body: updated,
+            });
