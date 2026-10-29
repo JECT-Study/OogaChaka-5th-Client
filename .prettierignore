@@ -1,0 +1,12 @@
+node_modules
+.next
+dist
+build
+coverage
+*.tsbuildinfo
+bun.lock
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+public
+

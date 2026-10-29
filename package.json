@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "oxlint --react-plugin --nextjs-plugin --deny-warnings",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -22,6 +24,8 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "oxlint": "^1.0.0",
+    "prettier": "^3.9.10",
+    "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.0.0"
   }

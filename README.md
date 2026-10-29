@@ -2,15 +2,16 @@
 
 ## 기술 스택
 
-| 구분 | 기술 |
-| --- | --- |
-| 프레임워크 | Next.js App Router, React |
-| 언어 | TypeScript |
-| 패키지 관리 | Bun |
-| 스타일링 | Tailwind CSS v4 |
-| 서버 상태 관리 | TanStack Query |
-| 클라이언트 상태 관리 | Zustand |
-| 코드 검사 | Oxlint |
+| 구분                 | 기술                      |
+| -------------------- | ------------------------- |
+| 프레임워크           | Next.js App Router, React |
+| 언어                 | TypeScript                |
+| 패키지 관리          | Bun                       |
+| 스타일링             | Tailwind CSS v4           |
+| 서버 상태 관리       | TanStack Query            |
+| 클라이언트 상태 관리 | Zustand                   |
+| 코드 검사            | Oxlint                    |
+| 코드 포맷팅          | Prettier                  |
 
 ## 시작하기
 
@@ -23,19 +24,19 @@ bun run dev
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인합니다.
 
-
 ## 명령어
 
 아래 명령어는 프로젝트 루트에서 실행합니다.
 
-| 명령어 | 설명 |
-| --- | --- |
-| `bun run dev` | 개발 서버 실행 |
-| `bun run lint` | Oxlint 코드 검사 |
-| `bun run typecheck` | TypeScript 타입 검사 |
-| `bun run build` | 프로덕션 빌드 |
-| `bun run start` | 빌드된 앱 실행 |
-
+| 명령어                 | 설명                      |
+| ---------------------- | ------------------------- |
+| `bun run dev`          | 개발 서버 실행            |
+| `bun run lint`         | Oxlint 코드 검사          |
+| `bun run format`       | Prettier 코드 자동 포맷팅 |
+| `bun run format:check` | Prettier 코드 포맷 검사   |
+| `bun run typecheck`    | TypeScript 타입 검사      |
+| `bun run build`        | 프로덕션 빌드             |
+| `bun run start`        | 빌드된 앱 실행            |
 
 ## 폴더 구조
 
