@@ -1,0 +1,166 @@
+@theme static {
+  /* 화면 좌우 여백: 20px */
+  --spacing-page: 1.25rem;
+  /* 정보가 많은 카드: 16px */
+  --spacing-card-padding-dense: 1rem;
+
+  /* 탭 바 내부 패딩: 16–24px */
+  --spacing-tab-bar-padding-min: 1rem;
+  --spacing-tab-bar-padding-max: 1.5rem;
+
+  /* 가로 탭 좌우 패딩: 12–16px */
+  --spacing-tab-padding-x-min: 0.75rem;
+  --spacing-tab-padding-x-max: 1rem;
+
+  /* 탭 상하 패딩: 8–12px */
+  --spacing-tab-padding-y-min: 0.5rem;
+  --spacing-tab-padding-y-max: 0.75rem;
+
+  /* 개별 탭 사이: 8–16px */
+  --spacing-tab-gap-min: 0.5rem;
+  --spacing-tab-gap-max: 1rem;
+
+  /* 버튼 간 여백: 개요: 16–20px */
+  --spacing-button-gap-min: 1rem;
+  --spacing-button-gap-max: 1.25rem;
+
+  /* 가로 버튼 사이: 8–12px */
+  --spacing-button-gap-x-min: 0.5rem;
+  --spacing-button-gap-x-max: 0.75rem;
+
+  /* 세로 버튼 사이: 8–16px */
+  --spacing-button-gap-y-min: 0.5rem;
+  --spacing-button-gap-y-max: 1rem;
+
+  /* 버튼 내부 좌우: 16–24px */
+  --spacing-button-padding-x-min: 1rem;
+  --spacing-button-padding-x-max: 1.5rem;
+
+  /* 버튼 내부 상하: 12–16px */
+  --spacing-button-padding-y-min: 0.75rem;
+  --spacing-button-padding-y-max: 1rem;
+
+  /* 제목과 콘텐츠: 개요: 16–24px */
+  --spacing-title-content-min: 1rem;
+  --spacing-title-content-max: 1.5rem;
+
+  /* 페이지 제목과 설명: 4–8px */
+  --spacing-page-title-description-min: 0.25rem;
+  --spacing-page-title-description-max: 0.5rem;
+
+  /* 페이지 제목과 본문: 16–24px */
+  --spacing-page-title-content-min: 1rem;
+  --spacing-page-title-content-max: 1.5rem;
+
+  /* 섹션 제목과 설명: 4–8px */
+  --spacing-section-title-description-min: 0.25rem;
+  --spacing-section-title-description-max: 0.5rem;
+
+  /* 섹션 제목과 콘텐츠: 12–16px */
+  --spacing-section-title-content-min: 0.75rem;
+  --spacing-section-title-content-max: 1rem;
+
+  /* 카드 제목과 본문: 4–8px */
+  --spacing-card-title-body-min: 0.25rem;
+  --spacing-card-title-body-max: 0.5rem;
+
+  /* 섹션 사이: 개요: 24–40px */
+  --spacing-section-gap-min: 1.5rem;
+  --spacing-section-gap-max: 2.5rem;
+
+  /* 같은 주제 내 하위 그룹: 16–24px */
+  --spacing-subgroup-gap-min: 1rem;
+  --spacing-subgroup-gap-max: 1.5rem;
+
+  /* 일반 섹션 사이: 24–32px */
+  --spacing-section-gap-normal-min: 1.5rem;
+  --spacing-section-gap-normal-max: 2rem;
+
+  /* 주요 섹션 사이: 32–48px */
+  --spacing-section-gap-major-min: 2rem;
+  --spacing-section-gap-major-max: 3rem;
+
+  /* 페이지 제목 영역과 첫 섹션: 24–32px */
+  --spacing-page-title-first-section-min: 1.5rem;
+  --spacing-page-title-first-section-max: 2rem;
+
+  /* 구분선 기준 섹션 간격: 16–24px */
+  --spacing-section-divider-gap-min: 1rem;
+  --spacing-section-divider-gap-max: 1.5rem;
+
+  /* 탭과 카드: 개요: 10–16px */
+  --spacing-tab-card-gap-min: 0.625rem;
+  --spacing-tab-card-gap-max: 1rem;
+
+  /* 탭 바와 첫 카드: 상세: 16–24px */
+  --spacing-tab-first-card-gap-min: 1rem;
+  --spacing-tab-first-card-gap-max: 1.5rem;
+
+  /* 탭 바와 리스트: 12–16px */
+  --spacing-tab-list-gap-min: 0.75rem;
+  --spacing-tab-list-gap-max: 1rem;
+
+  /* 탭과 콘텐츠 구분선: 0–8px */
+  --spacing-tab-divider-gap-min: 0rem;
+  --spacing-tab-divider-gap-max: 0.5rem;
+
+  /* 탭과 카드 사이 별도 섹션 제목이 있는 경우: 8–16px */
+  --spacing-tab-section-title-gap-min: 0.5rem;
+  --spacing-tab-section-title-gap-max: 1rem;
+
+  /* 카드 내부: 개요: 16–24px */
+  --spacing-card-padding-min: 1rem;
+  --spacing-card-padding-max: 1.5rem;
+
+  /* 일반 카드 내부: 16–20px */
+  --spacing-card-padding-normal-min: 1rem;
+  --spacing-card-padding-normal-max: 1.25rem;
+
+  /* 프로모션 카드 내부: 20–24px */
+  --spacing-card-padding-promotion-min: 1.25rem;
+  --spacing-card-padding-promotion-max: 1.5rem;
+
+  /* 카드 제목과 설명: 4–8px */
+  --spacing-card-title-description-min: 0.25rem;
+  --spacing-card-title-description-max: 0.5rem;
+
+  /* 카드 내 정보 그룹: 12–16px */
+  --spacing-card-group-gap-min: 0.75rem;
+  --spacing-card-group-gap-max: 1rem;
+
+  /* 카드 사이: 12–16px */
+  --spacing-card-gap-min: 0.75rem;
+  --spacing-card-gap-max: 1rem;
+
+  /* 폼 요소 사이: 개요: 8–16px */
+  --spacing-form-gap-min: 0.5rem;
+  --spacing-form-gap-max: 1rem;
+
+  /* 라벨과 입력창: 4–8px */
+  --spacing-field-label-gap-min: 0.25rem;
+  --spacing-field-label-gap-max: 0.5rem;
+
+  /* 입력창과 도움말·오류: 4–8px */
+  --spacing-field-message-gap-min: 0.25rem;
+  --spacing-field-message-gap-max: 0.5rem;
+
+  /* 입력창과 다음 입력 항목: 16–24px */
+  --spacing-field-gap-min: 1rem;
+  --spacing-field-gap-max: 1.5rem;
+
+  /* 폼 섹션 사이: 24–32px */
+  --spacing-form-section-gap-min: 1.5rem;
+  --spacing-form-section-gap-max: 2rem;
+
+  /* 입력창 내부 좌우: 12–16px */
+  --spacing-field-padding-x-min: 0.75rem;
+  --spacing-field-padding-x-max: 1rem;
+
+  /* 입력창 내부 상하: 12–16px */
+  --spacing-field-padding-y-min: 0.75rem;
+  --spacing-field-padding-y-max: 1rem;
+
+  /* 체크박스·라디오 항목 사이: 12–16px */
+  --spacing-choice-gap-min: 0.75rem;
+  --spacing-choice-gap-max: 1rem;
+}

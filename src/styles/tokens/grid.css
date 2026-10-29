@@ -1,0 +1,33 @@
+@theme static {
+  --spacing-grid-margin: 1.25rem; /* 20px */
+  --spacing-grid-gutter: 1.25rem; /* 20px */
+
+  --width-mobile: 375px;
+  --height-mobile: 635px;
+  --width-mobile-min: 360px; /* Android reference */
+}
+
+/* 4-column mobile grid */
+@utility grid-mobile {
+  display: grid;
+  box-sizing: border-box;
+  width: 100%;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: var(--spacing-grid-gutter);
+  padding-inline: var(--spacing-grid-margin);
+}
+
+/* 모바일 전용 뷰 컨테이너 (Web Mobile 375x635px 기준 + 화면 중앙 정렬) */
+@utility mobile-frame {
+  width: 100%;
+  max-width: var(--width-mobile);
+  min-height: 100dvh;
+  min-height: var(--height-mobile);
+  margin-inline: auto;
+}
+
+@layer utilities {
+  .grid-mobile > * {
+    min-width: 0;
+  }
+}

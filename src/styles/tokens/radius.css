@@ -1,0 +1,30 @@
+/*
+ * Figma: Radius scale / frame 180:1687
+ * The frame is named "Foundations - Typography" but contains Radius scale.
+ * Import after @import "tailwindcss" in global CSS.
+ * These intentionally replace Tailwind's named radius defaults.
+ * rem values assume a 16px root.
+ *
+ * rounded-none  0px    square regions
+ * rounded-xs    4px    small badges/graphics
+ * rounded-sm    8px    small cards/inputs
+ * rounded-md   12px    standard cards/fields
+ * rounded-lg   16px    primary cards/image containers
+ * rounded-xl   24px    bottom sheets/large panels
+ * rounded-full 999px   pill buttons/avatars
+ *
+ * Source uses 999px as a pill convention, preserved here.
+ * A circular avatar also needs equal width and height.
+ * Very large components may need an explicit radius suited to their shape.
+ * No radius-2xl/3xl token is defined by this Figma scale.
+ */
+
+@theme static {
+  --radius-none: 0rem;
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 999px;
+}
