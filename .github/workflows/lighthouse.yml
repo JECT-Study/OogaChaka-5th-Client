@@ -1,0 +1,156 @@
+name: Lighthouse
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: baseline
+      - uses: oven-sh/setup-bun@v2
+      - uses: browser-actions/setup-chrome@v1
+        id: chrome
+      - name: Install Lighthouse
+        run: npm install --prefix /tmp/lighthouse-cli --no-save lighthouse@12
+      - name: Build base
+        working-directory: baseline
+        run: |
+          bun install --frozen-lockfile
+          bun run build
+      - name: Measure base (5 runs)
+        working-directory: baseline
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          PORT: '3001'
+        run: |
+          mkdir -p /tmp/lighthouse/base
+          bun run start > /tmp/lighthouse/base-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:3001/ > /dev/null; then break; fi
+            sleep 2
+          done
+          curl --fail --silent http://localhost:3001/ > /dev/null
+          for run in {1..5}; do
+            /tmp/lighthouse-cli/node_modules/.bin/lighthouse http://localhost:3001/ \
+              --chrome-flags="--headless --no-sandbox" --output=json \
+              --output-path="/tmp/lighthouse/base/$run.json" --quiet
+          done
+      - name: Build PR
+        working-directory: pr
+        run: |
+          bun install --frozen-lockfile
+          bun run build
+      - name: Measure PR (5 runs)
+        working-directory: pr
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+          PORT: '3000'
+        run: |
+          mkdir -p /tmp/lighthouse/pr
+          bun run start > /tmp/lighthouse/pr-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:3000/ > /dev/null; then break; fi
+            sleep 2
+          done
+          curl --fail --silent http://localhost:3000/ > /dev/null
+          for run in {1..5}; do
+            /tmp/lighthouse-cli/node_modules/.bin/lighthouse http://localhost:3000/ \
+              --chrome-flags="--headless --no-sandbox" --output=json --output=html \
+              --output-path="/tmp/lighthouse/pr/$run" --quiet
+          done
+      - name: Upload full PR reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-pr-reports
+          path: /tmp/lighthouse/pr/*.report.html
+      - name: Comment results
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const marker = '<!-- lighthouse-report -->';
+            const read = side => Array.from({length: 5}, (_, index) => {
+              const suffix = side === 'pr' ? '.report.json' : '.json';
+              return JSON.parse(fs.readFileSync(`/tmp/lighthouse/${side}/${index + 1}${suffix}`, 'utf8'));
+            });
+            const base = read('base');
+            const pr = read('pr');
+            const median = values => [...values].sort((a, b) => a - b)[2];
+            const metric = (reports, id) => median(reports.map(report => report.audits[id].numericValue));
+            const definitions = [
+              ['FCP', 'first-contentful-paint', 1800, 3000, 's'],
+              ['LCP', 'largest-contentful-paint', 2500, 4000, 's'],
+              ['TBT', 'total-blocking-time', 200, 600, 'ms'],
+              ['CLS', 'cumulative-layout-shift', 0.1, 0.25, ''],
+            ];
+            const format = (value, unit) => unit === 's' ? `${(value / 1000).toFixed(1)} s`
+              : unit === 'ms' ? `${Math.round(value)} ms` : value.toFixed(2);
+            const rows = definitions.map(([label, id, good, poor, unit]) => {
+              const current = metric(pr, id);
+              const previous = metric(base, id);
+              const delta = current - previous;
+              const threshold = `${format(good, unit)} / > ${format(poor, unit)}`;
+              const change = Math.abs(delta) < (unit === 's' ? 50 : unit === 'ms' ? 1 : 0.005)
+                ? '–' : delta > 0 ? `▲ +${format(delta, unit)}` : `▼ −${format(-delta, unit)}`;
+              const verdict = current <= good ? '🟢' : current <= poor ? '🟠' : '🔴';
+              return { label, current, delta, good, unit,
+                row: `| ${label} | ${format(current, unit)} | ${format(previous, unit)} | ${change} | ≤ ${threshold} | ${verdict} |` };
+            });
+            const warnings = rows.filter(item => item.current > item.good).map(item => {
+              const change = item.delta > 0 ? `, base 대비 **${format(item.delta, item.unit)} 악화**됐습니다` : '';
+              return `⚠️ **${item.label}**가 Good 기준(${format(item.good, item.unit)})을 초과했습니다${change}.`;
+            });
+            const lcpAudit = pr[2].audits['largest-contentful-paint-element'];
+            const lcpNode = lcpAudit?.details?.items?.[0]?.node;
+            const lcpElement = lcpNode?.selector ?? lcpNode?.snippet ?? '확인 불가';
+            const runUrl = `${process.env.GITHUB_SERVER_URL}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = [
+              marker,
+              '## 🚦 Lighthouse 리포트',
+              '',
+              ...(warnings.length ? [`> ${warnings.join('  ')}`, ''] : []),
+              '| 지표 | 이 PR | base (main) | 변화 | 기준 (Good / Poor) | 판정 |',
+              '| ---- | ----: | ----: | ----: | ------------------ | :--: |',
+              ...rows.map(item => item.row),
+              '',
+              '<sub>▲ 악화 · ▼ 개선 (모든 지표는 낮을수록 좋음)</sub>',
+              '',
+              '<details>',
+              '<summary>측정 환경 및 상세</summary>',
+              '',
+              '- 페이지: `/` · Mobile (Slow 4G, 4x CPU throttle)',
+              '- 실행: 각 5회 중앙값',
+              `- 커밋: \`${context.payload.pull_request.head.sha.slice(0, 7)}\``,
+              `- LCP 요소: \`${lcpElement.replaceAll('`', "'")}\``,
+              `- [전체 리포트 다운로드 (Actions 아티팩트)](${runUrl})`,
+              '',
+              '</details>',
+            ].join('\n');
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const previous = comments.find(comment => comment.user?.type === 'Bot' && comment.body?.includes(marker));
+            if (previous) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: previous.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
