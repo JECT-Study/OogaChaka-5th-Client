@@ -1,0 +1,136 @@
+:root {
+  --opacity-ds-0: 0;
+  --opacity-ds-5: 0.05;
+  --opacity-ds-8: 0.08;
+  --opacity-ds-12: 0.12;
+  --opacity-ds-16: 0.16;
+  --opacity-ds-22: 0.22;
+  --opacity-ds-28: 0.28;
+  --opacity-ds-35: 0.35;
+  --opacity-ds-43: 0.43;
+  --opacity-ds-52: 0.52;
+  --opacity-ds-61: 0.61;
+  --opacity-ds-74: 0.74;
+  --opacity-ds-88: 0.88;
+  --opacity-ds-97: 0.97;
+  --opacity-ds-100: 1;
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+}
+
+@theme static {
+  /* Figma Shade styles; fallbacks match extracted source colors exactly. */
+  --shadow-ds-micro: 0 1px 2px -1px var(--color-line-solid-normal, #dadbe0);
+  --shadow-ds-xsmall: 0 2px 2.2px 0 var(--color-fill-normal, #8f8f8f14);
+  --shadow-ds-small:
+    0 4px 6px -1px var(--color-fill-alternative, #8f8f8f1a),
+    0 2px 4px -2px var(--color-fill-normal, #8f8f8f14);
+  --shadow-ds-medium:
+    0 10px 15px -3px var(--color-fill-alternative, #8f8f8f1a),
+    0 4px 6px -2px var(--color-fill-normal, #8f8f8f14);
+  --shadow-ds-large:
+    0 16px 24px -6px var(--color-fill-strong, #8f8f8f0a),
+    0 6px 10px -4px var(--color-fill-normal, #8f8f8f14);
+  --shadow-ds-xlarge:
+    0 24px 38px -10px var(--color-fill-strong, #8f8f8f0a),
+    0 10px 15px -5px var(--color-fill-alternative, #8f8f8f1a);
+
+  /* Figma Spacing/Status reference variants (369:10739). */
+  --spacing-preview-status-pill: 54px;
+  --spacing-preview-status-notch: 44px;
+  --spacing-preview-status-compact: 20px;
+  --spacing-preview-status-none: 0px;
+  /* Figma Spacing/Bottom Safe Area reference variants (369:10728). */
+  --spacing-preview-bottom-gesture: 14px;
+  --spacing-preview-bottom-button: 48px;
+  --spacing-preview-bottom-none: 0px;
+}
+
+@utility opacity-ds-0 {
+  opacity: var(--opacity-ds-0);
+}
+
+@utility opacity-ds-5 {
+  opacity: var(--opacity-ds-5);
+}
+
+@utility opacity-ds-8 {
+  opacity: var(--opacity-ds-8);
+}
+
+@utility opacity-ds-12 {
+  opacity: var(--opacity-ds-12);
+}
+
+@utility opacity-ds-16 {
+  opacity: var(--opacity-ds-16);
+}
+
+@utility opacity-ds-22 {
+  opacity: var(--opacity-ds-22);
+}
+
+@utility opacity-ds-28 {
+  opacity: var(--opacity-ds-28);
+}
+
+@utility opacity-ds-35 {
+  opacity: var(--opacity-ds-35);
+}
+
+@utility opacity-ds-43 {
+  opacity: var(--opacity-ds-43);
+}
+
+@utility opacity-ds-52 {
+  opacity: var(--opacity-ds-52);
+}
+
+@utility opacity-ds-61 {
+  opacity: var(--opacity-ds-61);
+}
+
+@utility opacity-ds-74 {
+  opacity: var(--opacity-ds-74);
+}
+
+@utility opacity-ds-88 {
+  opacity: var(--opacity-ds-88);
+}
+
+@utility opacity-ds-97 {
+  opacity: var(--opacity-ds-97);
+}
+
+@utility opacity-ds-100 {
+  opacity: var(--opacity-ds-100);
+}
+
+@utility pt-safe {
+  padding-top: var(--safe-area-top);
+}
+@utility pr-safe {
+  padding-right: var(--safe-area-right);
+}
+@utility pb-safe {
+  padding-bottom: var(--safe-area-bottom);
+}
+@utility pl-safe {
+  padding-left: var(--safe-area-left);
+}
+@utility px-safe {
+  padding-left: var(--safe-area-left);
+  padding-right: var(--safe-area-right);
+}
+@utility py-safe {
+  padding-top: var(--safe-area-top);
+  padding-bottom: var(--safe-area-bottom);
+}
+@utility p-safe {
+  padding-top: var(--safe-area-top);
+  padding-right: var(--safe-area-right);
+  padding-bottom: var(--safe-area-bottom);
+  padding-left: var(--safe-area-left);
+}
