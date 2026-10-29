@@ -6,30 +6,53 @@ on:
 
 permissions:
   pull-requests: write
+  issues: read
 
 jobs:
   link-issue:
     runs-on: ubuntu-latest
     steps:
-      - name: Add issue number to PR description
+      - name: Sync issue title and link issue number to PR description
         uses: actions/github-script@v7
         with:
           script: |
             const pr = context.payload.pull_request;
-            const match = pr.head.ref.match(/^[^/]+\/(\d+)(?:-|$)/);
+            const match = pr.head.ref.match(/^(?:[^/]+[\/-])?(\d+)(?:-|$)/);
             if (!match) return;
 
-            const issue = `Closes #${match[1]}`;
+            const issueNumber = Number(match[1]);
+            const issue = `Closes #${issueNumber}`;
             const body = pr.body || '';
             const marker = '**이슈 번호**:';
             const line = `${marker} ${issue}`;
-            const updated = body.includes(marker)
+            const updatedBody = body.includes(marker)
               ? body.replace(/^\*\*이슈 번호\*\*:.*$/m, line)
               : `${body.trimEnd()}\n\n${line}`.trimStart();
-            if (updated === body) return;
 
-            await github.rest.pulls.update({
-              ...context.repo,
-              pull_number: pr.number,
-              body: updated,
-            });
+            let newTitle = pr.title;
+            // PR이 처음 생성(opened)되었을 때 이슈 제목으로 PR 제목을 자동 동기화
+            if (context.payload.action === 'opened') {
+              try {
+                const { data: issueData } = await github.rest.issues.get({
+                  ...context.repo,
+                  issue_number: issueNumber,
+                });
+                if (issueData && !issueData.pull_request && issueData.title) {
+                  newTitle = issueData.title;
+                }
+              } catch (error) {
+                console.log(`Failed to fetch issue #${issueNumber}:`, error.message);
+              }
+            }
+
+            const updates = {};
+            if (updatedBody !== body) updates.body = updatedBody;
+            if (newTitle !== pr.title) updates.title = newTitle;
+
+            if (Object.keys(updates).length > 0) {
+              await github.rest.pulls.update({
+                ...context.repo,
+                pull_number: pr.number,
+                ...updates,
+              });
+            }
