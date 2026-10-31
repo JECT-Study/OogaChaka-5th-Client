@@ -7,3 +7,9 @@ build/
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store
+
+# Native IDE and build artifacts
+.idea/
+*.iml
+xcuserdata/
+*.xcuserstate
