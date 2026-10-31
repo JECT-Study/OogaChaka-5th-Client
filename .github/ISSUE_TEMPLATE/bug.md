@@ -1,7 +1,7 @@
 ---
 name: 버그 제보 (Bug)
 about: 발생한 에러나 비정상적인 동작을 제보합니다.
-title: '[bug] '
+title: 'bug: '
 labels: ['bug']
 ---
 

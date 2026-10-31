@@ -40,6 +40,7 @@ bun run dev
 | `bun run start`        | 빌드된 앱 실행            |
 | `bun run build:web`    | Capacitor용 정적 웹 빌드  |
 | `bun run cap:sync`     | 웹 빌드 후 네이티브 프로젝트 동기화 |
+| `bun run ios`          | 웹 빌드, iOS 동기화 및 iOS Simulator 앱 실행 |
 | `bun run cap:open:ios` | Xcode에서 iOS 프로젝트 열기 |
 | `bun run cap:open:android` | Android Studio에서 Android 프로젝트 열기 |
 
@@ -48,6 +49,16 @@ bun run dev
 웹 앱은 Next.js static export로 `out/`에 생성되며 Capacitor가 해당 결과물을 iOS와 Android WebView에 포함합니다. 앱 ID는 `com.oogachaka.client`입니다.
 
 ### iOS 실행
+
+빌드부터 iOS Simulator 앱 실행까지 한 번에 처리하려면 다음 명령어를 사용합니다.
+
+```bash
+bun run ios
+```
+
+이 명령어는 `next build --webpack`, `bunx cap sync ios`, iOS Simulator 앱 설치·실행을 순서대로 처리합니다. Xcode와 iOS Simulator가 설치되어 있고 iPhone 시뮬레이터가 켜져 있어야 합니다. 여러 기기가 켜져 있으면 iPhone 17을 우선 선택하며, `IOS_SIMULATOR="iPhone 17 Pro" bun run ios`처럼 기기 이름이나 UDID를 지정할 수 있습니다.
+
+수동으로 Xcode에서 실행하려면 다음 명령어를 사용합니다.
 
 ```bash
 bun run cap:sync
