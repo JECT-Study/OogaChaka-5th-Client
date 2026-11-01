@@ -1,7 +1,7 @@
 ---
 name: 기타 작업 (Chore)
 about: 설정, 패키지, 리팩터링, 문서 등 기타 작업을 기록합니다.
-title: '[chore] '
+title: 'chore: '
 labels: ['chore']
 ---
 

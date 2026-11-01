@@ -1,5 +1,7 @@
 node_modules/
 .next/
+.next-dev/
+.next-capacitor/
 out/
 build/
 .env*

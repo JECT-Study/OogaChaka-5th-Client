@@ -1,7 +1,7 @@
 ---
 name: 기능 요청 (Feature)
 about: 새로운 기능 구현 또는 개선 사항을 작성합니다.
-title: '[feat] '
+title: 'feat: '
 labels: ['feat']
 ---
 
