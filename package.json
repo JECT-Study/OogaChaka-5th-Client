@@ -9,6 +9,7 @@
     "build:web": "next build --webpack",
     "cap:sync": "bun run build:web && bunx cap sync",
     "ios": "bun run build:web && bunx cap sync ios && node scripts/run-ios.mjs",
+    "ios:dev": "node scripts/run-ios.mjs --live",
     "cap:open:ios": "bunx cap open ios",
     "cap:open:android": "bunx cap open android",
     "start": "next start",
