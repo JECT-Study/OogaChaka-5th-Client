@@ -1,35 +1,43 @@
 'use client';
 
-import { ChevronLeft, Close, IconButton, MoreVertical, Scan } from '@/components';
 import { useRouter } from 'next/navigation';
+import type { ReactNode } from 'react';
+import { ChevronLeft, IconButton } from '@/components';
 
-interface IHeader {
+interface IHeaderProps {
   type?: 'detail' | 'sub';
+  title?: string;
+  leading?: ReactNode;
+  trailing?: ReactNode;
 }
 
-export default function Header({ type = 'detail' }: IHeader) {
-  return type === 'detail' ? <DetailHeader /> : <SubHeader />;
-}
-
-export function DetailHeader() {
+export default function Header({ type = 'detail', title, leading, trailing }: IHeaderProps) {
   const router = useRouter();
-  return (
-    <header className="pt-safe relative z-10 flex items-center justify-between">
-      <IconButton icon={ChevronLeft} label="뒤로가기" iconSize={14} onClick={() => router.back()} />
-      <div className="text-heading-2 box-content p-2.5">페이지 타이틀</div>
-      <IconButton icon={Close} label="닫기" iconSize={14} onClick={() => alert('닫기')} />
-    </header>
-  );
-}
 
-export function SubHeader() {
+  if (type === 'detail') {
+    return (
+      <header className="pt-safe relative z-10 flex min-h-11 items-center justify-between">
+        {leading ?? (
+          <IconButton
+            icon={ChevronLeft}
+            label="뒤로가기"
+            iconSize={14}
+            onClick={() => router.back()}
+          />
+        )}
+        {title && <h1 className="text-heading-2 box-content p-2.5">{title}</h1>}
+        {trailing ?? <span className="size-11" />}
+      </header>
+    );
+  }
+
   return (
-    <header className="pt-safe relative z-10">
-      <div className="flex items-center justify-between">
-        <IconButton icon={Scan} label="스캔" onClick={() => alert('스캔')} />
-        <IconButton icon={MoreVertical} label="더보기" onClick={() => alert('더보기')} />
+    <header className="pt-safe relative z-10 flex min-h-11 items-center justify-between">
+      <div className="flex items-center">
+        {leading}
+        {title && <h1 className="text-heading-2 box-content p-2.5">{title}</h1>}
       </div>
-      <div className="text-heading-2 box-content p-2.5">페이지 타이틀</div>
+      {trailing}
     </header>
   );
 }
