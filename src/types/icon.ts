@@ -7,3 +7,7 @@ export type IconProps = Omit<SVGProps<SVGSVGElement>, 'width' | 'height' | 'colo
 };
 
 export const DEFAULT_ICON_COLOR = 'var(--color-neutral-80)';
+
+export type NavIconProps = {
+  active?: boolean;
+};

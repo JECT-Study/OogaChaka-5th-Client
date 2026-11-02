@@ -1,6 +1,7 @@
 'use client';
 
 import { ChevronLeft, Close, IconButton, MoreVertical, Scan } from '@/components';
+import { useRouter } from 'next/navigation';
 
 interface IHeader {
   type?: 'detail' | 'sub';
@@ -11,14 +12,10 @@ export default function Header({ type = 'detail' }: IHeader) {
 }
 
 export function DetailHeader() {
+  const router = useRouter();
   return (
     <header className="pt-safe relative z-10 flex items-center justify-between">
-      <IconButton
-        icon={ChevronLeft}
-        label="뒤로가기"
-        iconSize={14}
-        onClick={() => alert('뒤로가기')}
-      />
+      <IconButton icon={ChevronLeft} label="뒤로가기" iconSize={14} onClick={() => router.back()} />
       <div className="text-heading-2 box-content p-2.5">페이지 타이틀</div>
       <IconButton icon={Close} label="닫기" iconSize={14} onClick={() => alert('닫기')} />
     </header>
