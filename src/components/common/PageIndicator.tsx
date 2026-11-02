@@ -10,7 +10,7 @@ const SIZE_CLASS = {
 
 export default function PageIndicator({ total, size = 'md', current = 0 }: IPageIndicatorProps) {
   return (
-    <div className="flex h-20 gap-2.5">
+    <div className="flex h-4 items-center gap-2.5">
       {Array.from({ length: total }, (_, idx) => (
         <div
           key={idx}
