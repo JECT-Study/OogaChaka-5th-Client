@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   distDir: process.env.NODE_ENV === 'development' ? '.next-dev' : '.next',
   assetPrefix: process.env.NODE_ENV === 'production' ? './' : undefined,
   trailingSlash: true,
+  devIndicators: false,
   images: {
     unoptimized: true,
   },

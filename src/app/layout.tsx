@@ -17,11 +17,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="ko">
       <body className="min-h-dvh">
-        <div className="mx-auto flex min-h-dvh w-full flex-col shadow-lg">
-          <header className="px-content-safe pt-safe relative z-10 shadow-2xl">Header</header>
-          <main className="px-content-safe flex min-h-0 flex-1 flex-col">{children}</main>
-          <footer className="px-content-safe pb-safe shadow-2xl">Footer</footer>
-        </div>
+        <Providers>
+          <div className="mx-auto flex min-h-dvh w-full flex-col shadow-lg">{children}</div>
+        </Providers>
       </body>
     </html>
   );
