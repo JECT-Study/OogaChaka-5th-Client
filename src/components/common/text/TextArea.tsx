@@ -3,7 +3,7 @@
 import { useId, useRef, type ChangeEvent, type ComponentProps } from 'react';
 
 import { useAutoGrow } from '@/hook/useAutoGrow';
-import { useCharCount } from '@/hook/Usecharcount';
+import { useCharCount } from '@/hook/useCharCount';
 
 import TextButton from '../button/TextButton';
 import {
