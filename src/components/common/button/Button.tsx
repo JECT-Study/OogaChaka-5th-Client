@@ -12,8 +12,15 @@ export type ButtonSize = 'large' | 'medium' | 'small';
 export type ButtonVariant = 'primary' | 'neutral';
 export type ButtonAppearance = 'filled' | 'outlined';
 export type ButtonState = 'normal' | 'pressed' | 'focused' | 'disabled';
-
 export type ButtonLength = number | string;
+
+type ButtonStateColors = {
+  bg: string;
+  text: string;
+  border: string;
+};
+
+type ButtonStatePalette = Record<ButtonState, ButtonStateColors>;
 
 export type ButtonProps = Omit<ComponentProps<'button'>, 'color'> & {
   size?: ButtonSize;
@@ -27,10 +34,13 @@ export type ButtonProps = Omit<ComponentProps<'button'>, 'color'> & {
   defaultChecked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
   state?: ButtonState;
+
   width?: ButtonLength;
   height?: ButtonLength;
+
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
+
   iconGap?: number;
 };
 
@@ -38,80 +48,45 @@ const token = (name: string) => `var(--color-${name})`;
 
 const toCssLength = (value: ButtonLength) => (typeof value === 'number' ? `${value}px` : value);
 
-const PALETTE = {
+const colors = (bg: string, text: string, border = 'transparent'): ButtonStateColors => ({
+  bg,
+  text,
+  border,
+});
+
+const PALETTE: Record<ButtonVariant, Record<ButtonAppearance, ButtonStatePalette>> = {
   primary: {
     filled: {
-      normal: {
-        bg: token('primary-strong'),
-        text: token('static-white'),
-        border: 'transparent',
-      },
-      pressed: {
-        bg: token('primary-heavy'),
-        text: token('static-white'),
-        border: 'transparent',
-      },
-      disabled: {
-        bg: token('interaction-disabled'),
-        text: token('label-disabled'),
-        border: 'transparent',
-      },
+      normal: colors(token('primary-strong'), token('static-white')),
+      pressed: colors(token('primary-heavy'), token('static-white')),
+      focused: colors(token('primary-normal'), token('static-white')),
+      disabled: colors(token('interaction-disabled'), token('label-disabled')),
     },
+
     outlined: {
-      normal: {
-        bg: token('primary-subtle'),
-        text: token('primary-strong'),
-        border: token('periwinkle-300'),
-      },
-      pressed: {
-        bg: token('periwinkle-100'),
-        text: token('primary-strong'),
-        border: token('periwinkle-300'),
-      },
-      disabled: {
-        bg: 'transparent',
-        text: token('label-disabled'),
-        border: token('cool-neutral-10'),
-      },
+      normal: colors('transparent', token('primary-strong'), token('primary-strong')),
+      pressed: colors(token('primary-subtle'), token('primary-strong'), token('primary-strong')),
+      focused: colors(token('primary-subtle'), token('primary-strong'), token('primary-normal')),
+      disabled: colors('transparent', token('label-disabled'), token('cool-neutral-10')),
     },
   },
+
   neutral: {
     filled: {
-      normal: {
-        bg: token('cool-neutral-50'),
-        text: token('static-white'),
-        border: 'transparent',
-      },
-      pressed: {
-        bg: token('cool-neutral-80'),
-        text: token('static-white'),
-        border: 'transparent',
-      },
-      disabled: {
-        bg: token('interaction-disabled'),
-        text: token('label-disabled'),
-        border: 'transparent',
-      },
+      normal: colors(token('cool-neutral-50'), token('static-white')),
+      pressed: colors(token('cool-neutral-70'), token('static-white')),
+      focused: colors(token('cool-neutral-60'), token('static-white')),
+      disabled: colors(token('interaction-disabled'), token('label-disabled')),
     },
+
     outlined: {
-      normal: {
-        bg: 'transparent',
-        text: token('label-normal'),
-        border: token('line-normal-strong'),
-      },
-      pressed: {
-        bg: token('neutral-5'),
-        text: token('label-normal'),
-        border: token('line-normal-strong'),
-      },
-      disabled: {
-        bg: 'transparent',
-        text: token('label-disabled'),
-        border: token('cool-neutral-10'),
-      },
+      normal: colors('transparent', token('label-neutral'), token('line-normal-strong')),
+      pressed: colors(token('neutral-5'), token('label-normal'), token('line-normal-strong')),
+      focused: colors(token('neutral-5'), token('label-normal'), token('cool-neutral-40')),
+      disabled: colors('transparent', token('label-disabled'), token('cool-neutral-10')),
     },
   },
-} as const;
+};
 
 const SIZE = {
   large: {
@@ -132,7 +107,7 @@ const SIZE = {
 } as const;
 
 const BASE =
-  "inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap font-pretendard [font-feature-settings:'ss10'] transition-colors [-webkit-tap-highlight-color:transparent] disabled:cursor-not-allowed disabled:bg-(color:--button-disabled-bg) disabled:text-(color:--button-disabled-text)";
+  "inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap font-pretendard [font-feature-settings:'ss10'] transition-colors [-webkit-tap-highlight-color:transparent] disabled:cursor-not-allowed";
 
 function getButtonStyle(
   variant: ButtonVariant,
@@ -152,6 +127,10 @@ function getButtonStyle(
     '--button-pressed-text': palette.pressed.text,
     '--button-pressed-border': palette.pressed.border,
 
+    '--button-focused-bg': palette.focused.bg,
+    '--button-focused-text': palette.focused.text,
+    '--button-focused-border': palette.focused.border,
+
     '--button-disabled-bg': palette.disabled.bg,
     '--button-disabled-text': palette.disabled.text,
     '--button-disabled-border': palette.disabled.border,
@@ -162,7 +141,6 @@ function getButtonStyle(
   } as CSSProperties;
 }
 
-/** 제공된 Shape_default.svg의 형태를 currentColor로 표현 */
 function ButtonCheckbox({ checked }: { checked: boolean }) {
   return (
     <svg
@@ -182,18 +160,16 @@ function ButtonCheckbox({ checked }: { checked: boolean }) {
           strokeLinejoin="round"
         />
       ) : (
-        <>
-          <rect
-            x="2.5"
-            y="2.5"
-            width="15"
-            height="15"
-            rx="2"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeDasharray="2 2"
-          />
-        </>
+        <rect
+          x="2.5"
+          y="2.5"
+          width="15"
+          height="15"
+          rx="2"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeDasharray="2 2"
+        />
       )}
     </svg>
   );
@@ -233,8 +209,10 @@ export default function Button({
   const isControlled = checked !== undefined;
   const isChecked = isControlled ? checked : internalChecked;
 
-  const isDisabled = disabled || state === 'disabled';
+  const isDisabled = !!disabled || state === 'disabled';
   const checkable = leftCheckbox || rightCheckbox;
+
+  const resolvedState: ButtonState = isDisabled ? 'disabled' : state;
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     onClick?.(event);
@@ -252,8 +230,6 @@ export default function Button({
     onCheckedChange?.(next);
   };
 
-  const forcedState = state === 'normal' && isDisabled ? 'disabled' : state;
-
   const buttonStyle = {
     ...getButtonStyle(variant, appearance, width, height, iconGap),
     ...style,
@@ -265,7 +241,7 @@ export default function Button({
       type={type}
       disabled={isDisabled}
       aria-pressed={checkable ? isChecked : undefined}
-      data-state={forcedState}
+      data-state={resolvedState}
       data-variant={variant}
       data-appearance={appearance}
       onClick={handleClick}
@@ -286,14 +262,20 @@ export default function Button({
 
         appearance === 'outlined' && 'enabled:active:border-(color:--button-pressed-border)',
 
-        'focus-visible:outline-2',
-        'focus-visible:outline-offset-2',
-        'focus-visible:outline-(color:--color-primary-normal)',
-
         'data-[state=pressed]:bg-(color:--button-pressed-bg)',
         'data-[state=pressed]:text-(color:--button-pressed-text)',
 
-        state === 'focused' && 'outline-2 outline-offset-2 outline-(color:--color-primary-normal)',
+        appearance === 'outlined' && 'data-[state=pressed]:border-(color:--button-pressed-border)',
+
+        'enabled:focus-visible:bg-(color:--button-focused-bg)',
+        'enabled:focus-visible:text-(color:--button-focused-text)',
+
+        appearance === 'outlined' && 'enabled:focus-visible:border-(color:--button-focused-border)',
+
+        'data-[state=focused]:bg-(color:--button-focused-bg)',
+        'data-[state=focused]:text-(color:--button-focused-text)',
+
+        appearance === 'outlined' && 'data-[state=focused]:border-(color:--button-focused-border)',
 
         'disabled:bg-(color:--button-disabled-bg)',
         'disabled:text-(color:--button-disabled-text)',
