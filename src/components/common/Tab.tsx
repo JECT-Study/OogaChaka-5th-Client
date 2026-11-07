@@ -24,6 +24,7 @@ export default function Tab({ items, current, onChange, size = 'md', rightSlot }
               type="button"
               role="tab"
               aria-selected={active}
+              onClick={() => onChange(idx)}
               className={`${SIZE_CLASS[size]} ${active ? 'text-label-strong border-b-label-strong border-b-2' : 'text-label-normal/40'}`}
             >
               {item}

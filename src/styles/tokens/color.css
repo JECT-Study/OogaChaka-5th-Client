@@ -249,6 +249,7 @@
   --color-primary-heavy: #693bc6;
   --color-label-strong: #0f0f0f;
   --color-label-neutral: #36363de3;
+  --color-label-alternative: #666666ba;
   --color-label-disabled: #66666633;
   --color-background-normal-alternative: #f7f7f8;
   --color-background-elevated-normal: #fefefe;
@@ -305,4 +306,3 @@
   --color-material-shade: #0f0f0f85;
   --color-line-normal-normal: #8f8f8f38;
 }
-
