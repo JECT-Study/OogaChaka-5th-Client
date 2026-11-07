@@ -1,5 +1,7 @@
 import type { Dayjs } from 'dayjs';
 
+export const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'] as const;
+
 export interface IDatePickerProps {
   type?: 'month' | 'week';
   initialDate?: Dayjs;
@@ -12,6 +14,7 @@ export interface IDatePickerHeaderProps {
   year?: number;
   next: () => void;
   prev: () => void;
+  className?: string;
 }
 
 export interface IWeekSelectorProps {
@@ -24,3 +27,7 @@ export interface IMonthSelectorProps {
   onChangeDate?: (date: Dayjs) => void;
 }
 
+export interface IDateState {
+  viewDate: Dayjs;
+  selectedDate: Dayjs;
+}
