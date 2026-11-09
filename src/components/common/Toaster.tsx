@@ -2,9 +2,7 @@
 
 import type { ComponentProps } from 'react';
 import { Toaster as SonnerToaster } from 'sonner';
-import CheckCircle from '@/components/Icon/input/Check';
-import ErrorCircle from '@/components/Icon/input/Error';
-import WarningCircle from '@/components/Icon/input/Warning';
+import { CheckCircle, ErrorCircle, SnackbarClose, WarningCircle } from '@/components/Icon/input';
 
 export type ToasterProps = ComponentProps<typeof SonnerToaster>;
 
@@ -16,9 +14,11 @@ export default function Toaster({ toastOptions, icons, ...props }: ToasterProps)
         success: <CheckCircle size={20} />,
         error: <ErrorCircle size={20} />,
         warning: <WarningCircle size={20} />,
+        close: <SnackbarClose />,
         ...icons,
       }}
       toastOptions={{
+        closeButtonAriaLabel: '닫기',
         ...toastOptions,
         classNames: {
           toast:

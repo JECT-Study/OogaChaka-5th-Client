@@ -15,6 +15,8 @@ export { default as Footer } from './common/Footer';
 export { default as Header } from './common/Header';
 export { default as IconButton } from './common/IconButton';
 export { default as Toaster } from './common/Toaster';
+export { snackbar } from './common/feedback/snackbar';
+export type { SnackbarOptions } from './common/feedback/snackbar';
 
 // DatePicker
 export { default as DatePicker } from './common/date-picker/DatePicker';
