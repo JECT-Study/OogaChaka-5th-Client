@@ -16,6 +16,7 @@ export { default as Header } from './common/Header';
 export { default as IconButton } from './common/IconButton';
 export { default as Toaster } from './common/Toaster';
 export { default as Tooltip } from './common/feedback/Tooltip';
+export { default as Overlay } from './common/feedback/Overlay';
 export { snackbar } from './common/feedback/snackbar';
 export type { SnackbarOptions } from './common/feedback/snackbar';
 
