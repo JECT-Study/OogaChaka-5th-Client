@@ -11,6 +11,7 @@ export { default as NavSettings } from './Icon/nav/NavSettings';
 export { default as Scan } from './Icon/Scan';
 
 // Common
+export { default as Divider } from './common/Divider';
 export { default as IconButton } from './common/IconButton';
 export { default as Footer } from './common/Footer';
 export { default as Header } from './common/Header';
