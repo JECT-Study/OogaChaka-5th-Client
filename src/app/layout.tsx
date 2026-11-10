@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Providers } from './providers';
+import { Toaster } from '@/components';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -19,6 +20,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className="min-h-dvh">
         <Providers>
           <div className="mx-auto flex min-h-dvh w-full flex-col shadow-lg">{children}</div>
+          <Toaster />
         </Providers>
       </body>
     </html>
