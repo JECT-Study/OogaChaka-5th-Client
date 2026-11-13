@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { cx, ChevronDown } from '@/components';
 
 export type DropdownVariant = 'neutral' | 'positive' | 'negative';
@@ -17,6 +17,7 @@ export interface IDropdownProps {
   list?: DropdownItem[];
   value?: string | number;
   onChange?: (value: string) => void;
+  icon?: ReactNode;
 }
 
 const VARIANT_STYLES: Record<DropdownVariant, string> = {
@@ -32,6 +33,7 @@ export default function Dropdown({
   list = [],
   value,
   onChange,
+  icon,
   ...props
 }: IDropdownProps) {
   const [internalSelected, setInternalSelected] = useState<string | number>(
@@ -58,13 +60,15 @@ export default function Dropdown({
     >
       <span className="line-clamp-1">{currentLabel}</span>
       <span className="flex size-6 shrink-0 items-center justify-center">
-        <ChevronDown
-          size={14}
-          className={cx(
-            !active ? 'text-label-disabled' : 'text-label-alternative',
-            'transition-transform',
-          )}
-        />
+        {icon ?? (
+          <ChevronDown
+            size={14}
+            className={cx(
+              !active ? 'text-label-disabled' : 'text-label-alternative',
+              'transition-transform',
+            )}
+          />
+        )}
       </span>
 
       {/*  네이티브 피커용 투명 select */}
