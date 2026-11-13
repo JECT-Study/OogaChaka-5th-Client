@@ -17,13 +17,14 @@ export { default as IconButton } from './common/IconButton';
 export { default as Footer } from './common/Footer';
 export { default as Header } from './common/Header';
 export { default as Dropdown } from './common/Dropdown';
-export { default as IconButton } from './common/IconButton';
+export { default as Message } from './common/message/Message';
+export { default as NoticeMessage } from './common/message/NoticeMessage';
+export { default as Comment } from './common/message/Comment';
 export { default as Toaster } from './common/Toaster';
 export { default as Tooltip } from './common/feedback/Tooltip';
 export { default as Overlay } from './common/feedback/Overlay';
 export { snackbar } from './common/feedback/snackbar';
 export type { SnackbarOptions } from './common/feedback/snackbar';
-
 
 // util
 export { cx } from './common/text/Fieldstyles';
