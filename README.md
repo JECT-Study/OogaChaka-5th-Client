@@ -40,7 +40,8 @@ bun run dev
 | `bun run start`        | 빌드된 앱 실행            |
 | `bun run build:web`    | Capacitor용 정적 웹 빌드  |
 | `bun run cap:sync`     | 웹 빌드 후 네이티브 프로젝트 동기화 |
-| `bun run ios`          | 웹 빌드, iOS 동기화 및 iOS Simulator 앱 실행 |
+| `bun run ios`          | 개발 서버와 iOS Simulator 라이브 리로드 실행 |
+| `bun run ios:build`    | 정적 빌드 및 iOS Simulator 앱 실행 |
 | `bun run cap:open:ios` | Xcode에서 iOS 프로젝트 열기 |
 | `bun run cap:open:android` | Android Studio에서 Android 프로젝트 열기 |
 
@@ -56,7 +57,7 @@ bun run dev
 bun run ios
 ```
 
-이 명령어는 `next build --webpack`, `bunx cap sync ios`, iOS Simulator 부팅·앱 설치·실행을 순서대로 처리합니다. 개발 서버는 `.next-dev/`를 쓰고 iOS용 정적 빌드는 `out/`에 생성됩니다. 여러 기기가 켜져 있으면 iPhone 17을 우선 선택하며, `IOS_SIMULATOR="iPhone 17 Pro" bun run ios`처럼 기기 이름이나 UDID를 지정할 수 있습니다.
+이 명령어는 개발 서버를 3100번 포트에서 시작하고 iOS Simulator에 연결합니다. 실행 중 웹 코드 변경 사항이 자동 반영되며, 종료하려면 터미널에서 Ctrl+C를 누릅니다. 포트는 `LIVE_PORT=3101 bun run ios`로 바꿀 수 있습니다. 여러 기기가 켜져 있으면 iPhone 17을 우선 선택하며, `IOS_SIMULATOR="iPhone 17 Pro" bun run ios`처럼 기기 이름이나 UDID를 지정할 수 있습니다. 정적 빌드를 확인하려면 `bun run ios:build`를 사용합니다.
 
 현재 첫 화면은 `src/app/page.tsx`와 `src/app/layout.tsx`의 기본 화면으로, `Header`, `메인 콘텐츠`, `Footer`만 표시됩니다.
 
