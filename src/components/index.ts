@@ -16,6 +16,8 @@ export { default as Divider } from './common/Divider';
 export { default as IconButton } from './common/IconButton';
 export { default as Footer } from './common/Footer';
 export { default as Header } from './common/Header';
+export { default as Thumbnail } from './common/Thumnail';
+export { default as FloatButton } from './common/button/FloatButton';
 export { default as Dropdown } from './common/Dropdown';
 export { default as Toaster } from './common/Toaster';
 export { default as Tooltip } from './common/feedback/Tooltip';
