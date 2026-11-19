@@ -13,16 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           path: pr
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           path: baseline
       - uses: oven-sh/setup-bun@v2
-      - uses: browser-actions/setup-chrome@v1
+      - uses: browser-actions/setup-chrome@v2
         id: chrome
       - name: Install Lighthouse
         run: npm install --prefix /tmp/lighthouse-cli --no-save lighthouse@12
@@ -77,13 +77,13 @@ jobs:
               --output-path="/tmp/lighthouse/pr/$run" --quiet
           done
       - name: Upload full PR reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: lighthouse-pr-reports
           path: /tmp/lighthouse/pr/*.report.html
       - name: Comment results
         if: github.event.pull_request.head.repo.full_name == github.repository
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
