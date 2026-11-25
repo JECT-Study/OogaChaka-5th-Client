@@ -9,6 +9,7 @@ export { default as NavHome } from './Icon/nav/NavHome';
 export { default as NavMarket } from './Icon/nav/NavMarket';
 export { default as NavMission } from './Icon/nav/NavMission';
 export { default as NavSettings } from './Icon/nav/NavSettings';
+export { default as NavVerify } from './Icon/nav/NavVerify';
 export { default as Scan } from './Icon/Scan';
 
 // Common
@@ -16,6 +17,8 @@ export { default as Divider } from './common/Divider';
 export { default as IconButton } from './common/IconButton';
 export { default as Footer } from './common/Footer';
 export { default as Header } from './common/Header';
+export { default as Thumbnail } from './common/Thumnail';
+export { default as FloatButton } from './common/button/FloatButton';
 export { default as Dropdown } from './common/Dropdown';
 export { default as Message } from './common/message/Message';
 export { default as NoticeMessage } from './common/message/NoticeMessage';
