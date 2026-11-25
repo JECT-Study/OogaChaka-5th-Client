@@ -9,6 +9,7 @@ export { default as NavHome } from './Icon/nav/NavHome';
 export { default as NavMarket } from './Icon/nav/NavMarket';
 export { default as NavMission } from './Icon/nav/NavMission';
 export { default as NavSettings } from './Icon/nav/NavSettings';
+export { default as NavVerify } from './Icon/nav/NavVerify';
 export { default as Scan } from './Icon/Scan';
 
 // Common
