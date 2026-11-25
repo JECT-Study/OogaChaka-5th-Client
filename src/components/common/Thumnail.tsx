@@ -13,6 +13,8 @@ export type ThumbnailProps = Omit<ComponentProps<'div'>, 'children'> & {
   width?: number | string;
   height?: number | string;
   fallback?: ReactNode;
+  /** 첫 화면에 바로 보이는 이미지(LCP)는 'eager'로 즉시 로딩한다. */
+  loading?: 'eager' | 'lazy';
 };
 
 export default function Thumbnail({
@@ -21,6 +23,7 @@ export default function Thumbnail({
   width,
   height,
   fallback,
+  loading,
   className,
   style,
   ...props
@@ -44,6 +47,7 @@ export default function Thumbnail({
           fill
           sizes="100vw"
           unoptimized
+          loading={loading}
           draggable={false}
           className="object-cover"
           onError={() => setFailedSrc(current)}

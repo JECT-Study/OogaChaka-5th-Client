@@ -6,10 +6,19 @@ import { CheckCircle, ErrorCircle, SnackbarClose, WarningCircle } from '@/compon
 
 export type ToasterProps = ComponentProps<typeof SonnerToaster>;
 
+// bottom 토스트는 하단 CTA(pb 20 + 버튼 60) 위 16px 간격에 띄운다.
+const TOAST_OFFSET = {
+  bottom: 'calc(96px + env(safe-area-inset-bottom, 0px))',
+  left: 20,
+  right: 20,
+};
+
 export default function Toaster({ toastOptions, icons, ...props }: ToasterProps) {
   return (
     <SonnerToaster
       position="top-center"
+      offset={TOAST_OFFSET}
+      mobileOffset={TOAST_OFFSET}
       icons={{
         success: <CheckCircle size={20} />,
         error: <ErrorCircle size={20} />,
