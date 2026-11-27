@@ -2,12 +2,12 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { snackbar } from '@/components';
 import {
   ConfirmDialog,
   MarketProductForm,
+  snackbar,
   type MarketProductFormValues,
-} from '@/components/market';
+} from '@/components';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
 import { useCreateProduct } from '@/hook/useGetProduct';
 import { parseMarketError } from '@/service/market';

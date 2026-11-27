@@ -7,12 +7,15 @@ import {
   fetchMarketItemDetail,
   fetchMarketItems,
   parseMarketError,
+  purchaseMarketItem,
   updateMarketItem,
 } from '@/service/market';
 import type {
   CreateMarketItemInput,
   MarketItemsPage,
   MarketItemsParams,
+  MarketPurchase,
+  PurchaseMarketItemInput,
   UpdateMarketItemInput,
 } from '@/types/market/types';
 
@@ -89,6 +92,30 @@ export function useDeleteProduct(options?: UseDeleteProductOptions) {
     },
     onError: (mutationError) => {
       const { message } = parseMarketError(mutationError);
+      snackbar(message, { message: false, position: 'bottom-center' });
+    },
+  });
+}
+
+type UsePurchaseProductOptions = {
+  onSuccess?: (purchase: MarketPurchase) => void;
+};
+
+export function usePurchaseProduct(options?: UsePurchaseProductOptions) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: PurchaseMarketItemInput) => purchaseMarketItem(input),
+    onSuccess: (purchase) => {
+      void queryClient.invalidateQueries({ queryKey: marketKeys.all });
+      options?.onSuccess?.(purchase);
+    },
+    onError: (mutationError, variables) => {
+      const { code, message } = parseMarketError(mutationError);
+      if (code === 'PRICE_CHANGED' || code === 'ITEM_NOT_FOR_SALE') {
+        void queryClient.invalidateQueries({ queryKey: marketKeys.detail(variables.itemId) });
+        void queryClient.invalidateQueries({ queryKey: marketKeys.all });
+      }
       snackbar(message, { message: false, position: 'bottom-center' });
     },
   });

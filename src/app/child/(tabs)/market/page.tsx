@@ -2,8 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import type { CSSProperties } from 'react';
-import { Button, Empty } from '@/components';
-import { MarketListSkeleton, MarketPointBadge, MarketProductCard } from '@/components/market';
+import {
+  Button,
+  Empty,
+  MarketListSkeleton,
+  MarketPointBadge,
+  MarketProductCard,
+} from '@/components';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
 import { useGetProduct } from '@/hook/useGetProduct';
 import { parseMarketError } from '@/service/market';
@@ -19,7 +24,11 @@ const CHILD_POINTS_PLACEHOLDER = 400;
 
 export default function ChildMarketPage() {
   const router = useRouter();
-  const { data, isPending, isError, error, refetch } = useGetProduct();
+  const { data, isPending, isError, error, refetch } = useGetProduct({
+    page: 0,
+    size: 20,
+    isActive: true,
+  });
 
   const products = data?.items ?? [];
 

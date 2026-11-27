@@ -2,13 +2,14 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
-import { Empty, snackbar } from '@/components';
 import {
+  Empty,
   MarketEditSkeleton,
   MarketHeader,
   MarketProductForm,
+  snackbar,
   type MarketProductFormValues,
-} from '@/components/market';
+} from '@/components';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
 import { useGetProductDetail, useUpdateProduct } from '@/hook/useGetProduct';
 import { parseMarketError } from '@/service/market';

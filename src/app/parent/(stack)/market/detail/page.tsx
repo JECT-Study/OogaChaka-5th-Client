@@ -2,15 +2,15 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
-import { Empty } from '@/components';
 import {
   ConfirmSheet,
+  Empty,
   MarketDetailSkeleton,
   MarketGuardianMessage,
   MarketHeader,
   MarketProductInfo,
   MarketProductThumbnail,
-} from '@/components/market';
+} from '@/components';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
 import { useGetProductDetail } from '@/hook/useGetProduct';
 import { parseMarketError } from '@/service/market';

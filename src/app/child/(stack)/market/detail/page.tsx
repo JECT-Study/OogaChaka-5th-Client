@@ -2,16 +2,18 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
-import { Button, Empty, snackbar } from '@/components';
 import {
+  Button,
   ConfirmDialog,
   ConfirmSheet,
+  Empty,
   MarketDetailSkeleton,
   MarketGuardianMessage,
   MarketHeader,
   MarketProductInfo,
   MarketProductThumbnail,
-} from '@/components/market';
+  snackbar,
+} from '@/components';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
 import { useGetProductDetail } from '@/hook/useGetProduct';
 import { parseMarketError } from '@/service/market';
@@ -50,12 +52,6 @@ function ChildMarketDetailContent() {
     }
 
     setPurchaseSheetOpen(true);
-  }
-
-  function handleConfirmPurchase() {
-    // TODO: 상품 구매(지급 요청) API 연동 시 mutation으로 교체
-    setPurchaseSheetOpen(false);
-    setCompleteDialogOpen(true);
   }
 
   if (itemId === null) {
@@ -119,7 +115,6 @@ function ChildMarketDetailContent() {
         <MarketGuardianMessage message={item.purchaseMessage} />
       </div>
 
-      {/* 하단 CTA (Figma 981:33000 Button+Gradient Scrim) */}
       <div className="from-static-white -mx-5 shrink-0 bg-gradient-to-t from-80% to-transparent px-5 pt-10 pb-[calc(20px+env(safe-area-inset-bottom,0px))]">
         <Button
           size="large"
@@ -133,17 +128,15 @@ function ChildMarketDetailContent() {
         </Button>
       </div>
 
-      {/* 구매 확인 바텀시트 (Figma 1043:21881) */}
       <ConfirmSheet
         type="purchase"
         open={purchaseSheetOpen}
+        itemId={item.itemId}
         title={item.name}
         points={item.price}
         onClose={() => setPurchaseSheetOpen(false)}
-        onConfirm={handleConfirmPurchase}
+        onSuccess={() => setCompleteDialogOpen(true)}
       />
-
-      {/* 상품 지급 요청 완료 모달 (Figma 1043:22324) */}
       <ConfirmDialog
         type="complete"
         open={completeDialogOpen}

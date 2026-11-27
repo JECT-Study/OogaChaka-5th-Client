@@ -2,14 +2,17 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, type CSSProperties } from 'react';
-import { Button, Empty, FloatButton, Header } from '@/components';
 import {
+  Button,
   ConfirmDialog,
   ConfirmSheet,
+  Empty,
+  FloatButton,
+  Header,
   MarketKebabMenu,
   MarketListSkeleton,
   MarketProductCard,
-} from '@/components/market';
+} from '@/components';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
 import { useGetProduct } from '@/hook/useGetProduct';
 import { parseMarketError } from '@/service/market';
@@ -100,7 +103,7 @@ export default function MarketPage() {
 
   return (
     <div className="relative flex flex-1 flex-col pb-24">
-      <div className="sticky top-0 z-20 -mx-5 bg-static-white px-5">
+      <div className="bg-static-white sticky top-0 z-20 -mx-5 px-5">
         <Header
           type="sub"
           title="포인트 마켓"
@@ -142,7 +145,6 @@ export default function MarketPage() {
         />
       )}
 
-      {/* 12개 초과 등록 시도 예외 모달 (Figma 1302:29731) */}
       <ConfirmDialog
         open={limitModalOpen}
         title={MARKET_MESSAGES.limitModal.title}
@@ -156,7 +158,6 @@ export default function MarketPage() {
         onPrimary={() => setLimitModalOpen(false)}
       />
 
-      {/* 상품 삭제 확인 바텀시트 (Figma 1400:15568 / 1425:16418) */}
       <ConfirmSheet
         type="delete"
         open={selectedItemId !== null}

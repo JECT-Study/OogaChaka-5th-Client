@@ -1,44 +1,76 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useRef } from 'react';
 import { MARKET_MESSAGES } from '@/constants/market';
+import { usePurchaseProduct } from '@/hook/useGetProduct';
+import type { MarketPurchase } from '@/types/market/types';
 import MarketPointBadge from '../MarketPointBadge';
 import ConfirmSheetShell from './ConfirmSheetShell';
 
 export type PurchaseConfirmSheetProps = {
   open: boolean;
+  itemId: number | null;
   title?: string;
   description?: string;
   points: number;
   cancelLabel?: string;
   confirmLabel?: string;
-  loading?: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onSuccess?: (purchase: MarketPurchase) => void;
 };
 
 export default function PurchaseConfirmSheet({
   open,
+  itemId,
   title = '',
   description,
   points,
   cancelLabel = MARKET_MESSAGES.purchaseSheet.cancelLabel,
   confirmLabel = MARKET_MESSAGES.purchaseSheet.confirmLabel,
-  loading = false,
   onClose,
-  onConfirm,
+  onSuccess,
 }: PurchaseConfirmSheetProps) {
+  // 같은 구매 시도의 재요청은 동일 Idempotency-Key를 사용하고, 시트를 새로 열면 새 키를 발급한다.
+  const idempotencyKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      idempotencyKeyRef.current = crypto.randomUUID();
+    } else {
+      idempotencyKeyRef.current = null;
+    }
+  }, [open, itemId, points]);
+
+  const purchaseProduct = usePurchaseProduct({
+    onSuccess: (purchase) => {
+      onClose();
+      onSuccess?.(purchase);
+    },
+  });
+
   return (
     <ConfirmSheetShell
-      open={open}
+      open={open && itemId !== null}
       dimmed
       title={title}
       cancelLabel={cancelLabel}
-      confirmLabel={loading ? MARKET_MESSAGES.purchaseSheet.loadingLabel : confirmLabel}
+      confirmLabel={
+        purchaseProduct.isPending ? MARKET_MESSAGES.purchaseSheet.loadingLabel : confirmLabel
+      }
       cancelTextClassName="text-[20px] leading-[1.4] tracking-[-0.048px]"
-      loading={loading}
+      loading={purchaseProduct.isPending}
       onClose={onClose}
-      onConfirm={onConfirm}
+      onConfirm={() => {
+        if (itemId === null || purchaseProduct.isPending) return;
+        const key = idempotencyKeyRef.current ?? crypto.randomUUID();
+        idempotencyKeyRef.current = key;
+        purchaseProduct.mutate({
+          itemId,
+          expectedPrice: points,
+          idempotencyKey: key,
+        });
+      }}
     >
       <div className="flex flex-col items-center justify-center gap-4">
         <Image
