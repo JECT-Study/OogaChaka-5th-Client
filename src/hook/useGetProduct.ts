@@ -1,9 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { snackbar } from '@/components';
+import { MARKET_MESSAGES } from '@/constants/market';
 import {
   createMarketItem,
   deleteMarketItem,
   fetchMarketItemDetail,
   fetchMarketItems,
+  parseMarketError,
   updateMarketItem,
 } from '@/service/market';
 import type {
@@ -59,7 +62,11 @@ export function useUpdateProduct() {
   });
 }
 
-export function useDeleteProduct() {
+type UseDeleteProductOptions = {
+  onSuccess?: () => void;
+};
+
+export function useDeleteProduct(options?: UseDeleteProductOptions) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -77,6 +84,12 @@ export function useDeleteProduct() {
       );
       queryClient.removeQueries({ queryKey: marketKeys.detail(itemId) });
       void queryClient.invalidateQueries({ queryKey: marketKeys.all });
+      snackbar(MARKET_MESSAGES.toast.deleteSuccess, { message: true, position: 'bottom-center' });
+      options?.onSuccess?.();
+    },
+    onError: (mutationError) => {
+      const { message } = parseMarketError(mutationError);
+      snackbar(message, { message: false, position: 'bottom-center' });
     },
   });
 }

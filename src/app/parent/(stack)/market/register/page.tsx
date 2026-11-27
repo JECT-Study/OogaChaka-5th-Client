@@ -3,13 +3,14 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { snackbar } from '@/components';
-import ConfirmDialog from '@/components/market/ConfirmDialog';
-import MarketProductForm, {
+import {
+  ConfirmDialog,
+  MarketProductForm,
   type MarketProductFormValues,
-} from '@/components/market/MarketProductForm';
+} from '@/components/market';
+import { MARKET_MESSAGES, ROUTES } from '@/constants';
 import { useCreateProduct } from '@/hook/useGetProduct';
 import { parseMarketError } from '@/service/market';
-import { ROUTES } from '@/constants/routes';
 
 export default function RegisterMarketItemPage() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function RegisterMarketItemPage() {
 
   async function handleSubmit(values: MarketProductFormValues) {
     if (!values.imageFile) {
-      setSubmitError('상품 사진을 등록해 주세요.');
+      setSubmitError(MARKET_MESSAGES.validation.imageRequired);
       return;
     }
 
@@ -33,7 +34,7 @@ export default function RegisterMarketItemPage() {
         },
         image: values.imageFile,
       });
-      snackbar('상품을 성공적으로 등록했어요!', { message: true, position: 'bottom-center' });
+      snackbar(MARKET_MESSAGES.toast.createSuccess, { message: true, position: 'bottom-center' });
       router.replace(ROUTES.parent.market);
     } catch (error) {
       const { code, message } = parseMarketError(error);
@@ -59,12 +60,10 @@ export default function RegisterMarketItemPage() {
 
       <ConfirmDialog
         open={limitModalOpen}
-        title="상품 등록 개수를 초과했어요"
-        description={
-          '상품은 최대 12개까지 등록할 수 있어요. 새로운\n상품을 등록하려면 기존 상품을 삭제해 주세요.'
-        }
-        secondaryLabel="목록 수정하기"
-        primaryLabel="등록 그만두기"
+        title={MARKET_MESSAGES.limitModal.title}
+        description={MARKET_MESSAGES.limitModal.description}
+        secondaryLabel={MARKET_MESSAGES.limitModal.secondaryLabel}
+        primaryLabel={MARKET_MESSAGES.limitModal.primaryLabel}
         onSecondary={() => {
           setLimitModalOpen(false);
           router.replace(ROUTES.parent.market);

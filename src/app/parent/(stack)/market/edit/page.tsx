@@ -2,15 +2,17 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
-import { ChevronLeft, Header, IconButton, snackbar } from '@/components';
-import Empty from '@/components/overlay/Empty';
-import MarketProductForm, {
+import { Empty, snackbar } from '@/components';
+import {
+  MarketEditSkeleton,
+  MarketHeader,
+  MarketProductForm,
   type MarketProductFormValues,
-} from '@/components/market/MarketProductForm';
+} from '@/components/market';
+import { MARKET_MESSAGES, ROUTES } from '@/constants';
 import { useGetProductDetail, useUpdateProduct } from '@/hook/useGetProduct';
 import { parseMarketError } from '@/service/market';
 import type { UpdateMarketItemRequest } from '@/types/market/types';
-import { ROUTES } from '@/constants/routes';
 
 function parseItemId(raw: string | null): number | null {
   if (!raw || !/^\d+$/.test(raw)) return null;
@@ -65,7 +67,7 @@ function EditMarketItemContent() {
         request,
         image: values.imageFile,
       });
-      snackbar('상품을 성공적으로 수정했어요!', { message: true, position: 'bottom-center' });
+      snackbar(MARKET_MESSAGES.toast.updateSuccess, { message: true, position: 'bottom-center' });
       goBackToPrevious();
     } catch (mutationError) {
       const { message } = parseMarketError(mutationError);
@@ -77,23 +79,12 @@ function EditMarketItemContent() {
   if (itemId === null) {
     return (
       <div className="flex flex-1 flex-col">
-        <Header
-          type="detail"
-          title="상품 수정"
-          leading={
-            <IconButton
-              icon={ChevronLeft}
-              label="뒤로가기"
-              iconSize={14}
-              onClick={() => router.replace(ROUTES.parent.market)}
-            />
-          }
-        />
+        <MarketHeader title="상품 수정" onBack={() => router.replace(ROUTES.parent.market)} />
         <div className="flex flex-1 items-center justify-center">
           <Empty
-            title="수정할 상품을 찾을 수 없어요."
-            description="마켓에서 상품을 다시 선택해 주세요."
-            actionLabel="마켓으로 돌아가기"
+            title={MARKET_MESSAGES.empty.editNotFoundTitle}
+            description={MARKET_MESSAGES.empty.editNotFoundDescription}
+            actionLabel={MARKET_MESSAGES.empty.backToMarketAction}
             onAction={() => router.replace(ROUTES.parent.market)}
           />
         </div>
@@ -104,24 +95,8 @@ function EditMarketItemContent() {
   if (isPending) {
     return (
       <div className="flex flex-1 flex-col gap-5">
-        <Header
-          type="detail"
-          title="상품 수정"
-          leading={
-            <IconButton
-              icon={ChevronLeft}
-              label="뒤로가기"
-              iconSize={14}
-              onClick={goBackToPrevious}
-            />
-          }
-        />
-        <div aria-busy="true" className="flex flex-col gap-4 pt-4">
-          <div className="size-[162px] animate-pulse rounded-md bg-neutral-10" />
-          <div className="h-12 w-full animate-pulse rounded-md bg-neutral-10" />
-          <div className="h-12 w-full animate-pulse rounded-md bg-neutral-10" />
-          <div className="h-28 w-full animate-pulse rounded-md bg-neutral-10" />
-        </div>
+        <MarketHeader title="상품 수정" onBack={goBackToPrevious} />
+        <MarketEditSkeleton />
       </div>
     );
   }
@@ -131,23 +106,20 @@ function EditMarketItemContent() {
     const isNotFound = status === 404;
     return (
       <div className="flex flex-1 flex-col">
-        <Header
-          type="detail"
-          title="상품 수정"
-          leading={
-            <IconButton
-              icon={ChevronLeft}
-              label="뒤로가기"
-              iconSize={14}
-              onClick={goBackToPrevious}
-            />
-          }
-        />
+        <MarketHeader title="상품 수정" onBack={goBackToPrevious} />
         <div role="alert" className="flex flex-1 items-center justify-center">
           <Empty
-            title={isNotFound ? '상품을 찾을 수 없어요.' : '상품 정보를 불러오지 못했어요.'}
+            title={
+              isNotFound
+                ? MARKET_MESSAGES.empty.notFoundTitle
+                : MARKET_MESSAGES.empty.editErrorTitle
+            }
             description={message}
-            actionLabel={isNotFound ? '마켓으로 돌아가기' : '다시 시도'}
+            actionLabel={
+              isNotFound
+                ? MARKET_MESSAGES.empty.backToMarketAction
+                : MARKET_MESSAGES.empty.retryAction
+            }
             onAction={isNotFound ? () => router.replace(ROUTES.parent.market) : () => void refetch()}
           />
         </div>
@@ -176,7 +148,7 @@ function EditMarketItemContent() {
 
 export default function EditMarketItemPage() {
   return (
-    <Suspense fallback={<p className="py-8">상품 정보를 불러오는 중이에요.</p>}>
+    <Suspense fallback={<p className="py-8">{MARKET_MESSAGES.loading.item}</p>}>
       <EditMarketItemContent />
     </Suspense>
   );

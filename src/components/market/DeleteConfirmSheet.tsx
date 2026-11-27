@@ -2,6 +2,7 @@
 
 import { useEffect, type MouseEvent } from 'react';
 import Button from '@/components/common/button/Button';
+import { MARKET_MESSAGES } from '@/constants/market';
 
 type DeleteConfirmSheetProps = {
   open: boolean;
@@ -16,10 +17,10 @@ type DeleteConfirmSheetProps = {
 
 export default function DeleteConfirmSheet({
   open,
-  title = '상품을 삭제할까요?',
-  description = '삭제한 상품은 다시 되돌릴 수 없어요. 이 상품을 정말 삭제할까요?',
-  cancelLabel = '취소',
-  confirmLabel = '삭제하기',
+  title = MARKET_MESSAGES.deleteSheet.title,
+  description = MARKET_MESSAGES.deleteSheet.description,
+  cancelLabel = MARKET_MESSAGES.deleteSheet.cancelLabel,
+  confirmLabel = MARKET_MESSAGES.deleteSheet.confirmLabel,
   loading = false,
   onCancel,
   onConfirm,
@@ -97,7 +98,7 @@ export default function DeleteConfirmSheet({
               className="flex-1"
               onClick={onConfirm}
             >
-              {loading ? '삭제 중...' : confirmLabel}
+              {loading ? MARKET_MESSAGES.deleteSheet.loadingLabel : confirmLabel}
             </Button>
           </div>
         </div>
