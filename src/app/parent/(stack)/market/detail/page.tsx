@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 import { Empty } from '@/components';
 import {
-  DeleteConfirmSheet,
+  ConfirmSheet,
   MarketDetailSkeleton,
   MarketGuardianMessage,
   MarketHeader,
@@ -12,7 +12,7 @@ import {
   MarketProductThumbnail,
 } from '@/components/market';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
-import { useDeleteProduct, useGetProductDetail } from '@/hook/useGetProduct';
+import { useGetProductDetail } from '@/hook/useGetProduct';
 import { parseMarketError } from '@/service/market';
 
 function parseItemId(raw: string | null): number | null {
@@ -28,12 +28,6 @@ function MarketDetailContent() {
 
   const { data: item, isPending, isError, error, refetch } = useGetProductDetail(itemId);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const deleteProduct = useDeleteProduct({
-    onSuccess: () => {
-      setDeleteDialogOpen(false);
-      router.replace(ROUTES.parent.market);
-    },
-  });
 
   function goToList() {
     router.push(ROUTES.parent.market);
@@ -95,7 +89,6 @@ function MarketDetailContent() {
       <MarketHeader
         title={item.name}
         onBack={goToList}
-        deleteDisabled={deleteProduct.isPending}
         onDelete={() => setDeleteDialogOpen(true)}
         onEdit={() => router.push(ROUTES.parent.marketEdit(item.itemId))}
       />
@@ -106,11 +99,12 @@ function MarketDetailContent() {
         <MarketGuardianMessage message={item.purchaseMessage} />
       </div>
 
-      <DeleteConfirmSheet
+      <ConfirmSheet
+        type="delete"
         open={deleteDialogOpen}
-        loading={deleteProduct.isPending}
-        onCancel={() => setDeleteDialogOpen(false)}
-        onConfirm={() => deleteProduct.mutate(item.itemId)}
+        itemId={item.itemId}
+        onClose={() => setDeleteDialogOpen(false)}
+        onSuccess={() => router.replace(ROUTES.parent.market)}
       />
     </div>
   );

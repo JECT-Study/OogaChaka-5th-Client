@@ -12,6 +12,7 @@ export const MARKET_MESSAGES = {
     listErrorTitle: '상품을 불러오지 못했어요.',
     listEmptyTitle: '등록된 상품이 없어요.',
     listEmptyDescription: '자녀가 포인트로 교환할 첫 보상 상품을 등록해 보세요.',
+    childListEmptyDescription: '보호자가 보상 상품을 등록하면 이곳에서 확인할 수 있어요.',
     listEmptyAction: '상품 등록하기',
     invalidItemTitle: '유효하지 않은 상품이에요.',
     invalidItemDescription: '상품 정보를 다시 선택한 뒤 확인해 주세요.',
@@ -42,5 +43,17 @@ export const MARKET_MESSAGES = {
     cancelLabel: '취소',
     confirmLabel: '삭제하기',
     loadingLabel: '삭제 중...',
+  },
+  purchaseSheet: {
+    cancelLabel: '취소',
+    confirmLabel: '선택하기',
+    loadingLabel: '처리 중...',
+    description: (points: number) =>
+      `전체 포인트에 ${points.toLocaleString()} 포인트가 차감될 거에요.\n이 상품으로 선택할까요?`,
+  },
+  purchaseCompleteDialog: {
+    title: '상품 지급을 요청했어요.',
+    description: '보호자에게 상품 지급을 요청했어요.\n확인이 완료되면 상품을 받을 수 있어요!',
+    actionLabel: '마켓으로 돌아가기',
   },
 } as const;

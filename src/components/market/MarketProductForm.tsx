@@ -5,7 +5,7 @@ import { ChevronLeft, Header, IconButton, Thumbnail } from '@/components';
 import Button from '@/components/common/button/Button';
 import Input from '@/components/common/text/Input';
 import TextArea from '@/components/common/text/TextArea';
-import ConfirmDialog from './ConfirmDialog';
+import ConfirmDialog from './dialog/ConfirmDialog';
 import MarketKebabMenu from './MarketKebabMenu';
 import { MARKET_CONSTRAINTS } from '@/types/market/types';
 

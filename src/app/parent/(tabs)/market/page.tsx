@@ -5,13 +5,13 @@ import { useState, type CSSProperties } from 'react';
 import { Button, Empty, FloatButton, Header } from '@/components';
 import {
   ConfirmDialog,
-  DeleteConfirmSheet,
+  ConfirmSheet,
   MarketKebabMenu,
   MarketListSkeleton,
   MarketProductCard,
 } from '@/components/market';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
-import { useDeleteProduct, useGetProduct } from '@/hook/useGetProduct';
+import { useGetProduct } from '@/hook/useGetProduct';
 import { parseMarketError } from '@/service/market';
 import { MARKET_CONSTRAINTS } from '@/types/market/types';
 
@@ -26,23 +26,10 @@ export default function MarketPage() {
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
   const [limitModalOpen, setLimitModalOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { data, isPending, isError, error, refetch } = useGetProduct();
 
   const products = data?.items ?? [];
   const itemCount = data?.totalElements ?? products.length;
-  const selectedItem = products.find((item) => item.itemId === selectedItemId) ?? null;
-
-  const deleteProduct = useDeleteProduct({
-    onSuccess: () => {
-      setDeleteDialogOpen(false);
-      if (products.length <= 1) {
-        exitDeleteMode();
-      } else {
-        setSelectedItemId(null);
-      }
-    },
-  });
 
   function enterDeleteMode() {
     setIsDeleteMode(true);
@@ -104,10 +91,7 @@ export default function MarketPage() {
             // 첫 화면에 보이는 위쪽 두 줄은 즉시 로딩한다.
             eager={index < 4}
             isDeleteMode={isDeleteMode}
-            onRequestDelete={() => {
-              setSelectedItemId(product.itemId);
-              setDeleteDialogOpen(true);
-            }}
+            onRequestDelete={() => setSelectedItemId(product.itemId)}
           />
         ))}
       </div>
@@ -173,15 +157,13 @@ export default function MarketPage() {
       />
 
       {/* 상품 삭제 확인 바텀시트 (Figma 1400:15568 / 1425:16418) */}
-      <DeleteConfirmSheet
-        open={deleteDialogOpen && Boolean(selectedItem)}
-        loading={deleteProduct.isPending}
-        onCancel={() => {
-          setDeleteDialogOpen(false);
-          setSelectedItemId(null);
-        }}
-        onConfirm={() => {
-          if (selectedItem) deleteProduct.mutate(selectedItem.itemId);
+      <ConfirmSheet
+        type="delete"
+        open={selectedItemId !== null}
+        itemId={selectedItemId}
+        onClose={() => setSelectedItemId(null)}
+        onSuccess={() => {
+          if (products.length <= 1) exitDeleteMode();
         }}
       />
     </div>
