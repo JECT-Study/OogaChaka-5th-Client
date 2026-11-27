@@ -7,6 +7,7 @@ export const MARKET_MESSAGES = {
     createSuccess: '상품을 성공적으로 등록했어요!',
     updateSuccess: '상품을 성공적으로 수정했어요!',
     deleteSuccess: '상품을 성공적으로 삭제했어요!',
+    insufficientPoints: '포인트가 부족해서 구매할 수 없어요...!',
   },
   empty: {
     listErrorTitle: '상품을 불러오지 못했어요.',
