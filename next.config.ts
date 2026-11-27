@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   },
   output: 'export',
   distDir: process.env.NODE_ENV === 'development' ? '.next-dev' : '.next',
-  assetPrefix: process.env.NODE_ENV === 'production' ? './' : undefined,
+  assetPrefix: process.env.NODE_ENV === 'production' && !process.env.VERCEL ? './' : undefined,
   trailingSlash: true,
   devIndicators: false,
   images: {
