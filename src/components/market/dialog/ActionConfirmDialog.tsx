@@ -4,7 +4,7 @@ import type { CSSProperties } from 'react';
 import Button from '@/components/common/button/Button';
 import ConfirmDialogShell from './ConfirmDialogShell';
 
-export type ActionConfirmDialogProps = {
+export interface IActionConfirmDialogProps {
   open: boolean;
   title: string;
   description?: string;
@@ -17,7 +17,7 @@ export type ActionConfirmDialogProps = {
   onBackdropClose?: () => void;
   onSecondary: () => void;
   onPrimary: () => void;
-};
+}
 
 // Button 기본 팔레트에 없는 모달 전용 색 조합.
 // normal / pressed / focused 상태를 모두 덮어써 기본 팔레트 색이 섞이지 않게 한다.
@@ -64,7 +64,7 @@ export default function ActionConfirmDialog({
   onBackdropClose,
   onSecondary,
   onPrimary,
-}: ActionConfirmDialogProps) {
+}: IActionConfirmDialogProps) {
   return (
     <ConfirmDialogShell
       open={open}

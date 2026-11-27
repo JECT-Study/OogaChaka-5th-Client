@@ -1,11 +1,11 @@
 import MarketPointBadge from './MarketPointBadge';
 
-export type MarketProductInfoProps = {
+interface IMarketProductInfoProps {
   name: string;
   price: number;
-};
+}
 
-export default function MarketProductInfo({ name, price }: MarketProductInfoProps) {
+export default function MarketProductInfo({ name, price }: IMarketProductInfoProps) {
   return (
     <section className="mt-4 flex flex-col items-center">
       <div className="flex items-center justify-center gap-2 py-3">

@@ -1,10 +1,10 @@
 'use client';
 
 import { MARKET_MESSAGES } from '@/constants/market';
-import { useDeleteProduct } from '@/hook/useGetProduct';
+import { useDeleteProduct } from '@/service/market/useDeleteProduct';
 import ConfirmSheetShell from './ConfirmSheetShell';
 
-export type DeleteConfirmSheetProps = {
+export interface IDeleteConfirmSheetProps {
   open: boolean;
   itemId: number | null;
   title?: string;
@@ -13,7 +13,7 @@ export type DeleteConfirmSheetProps = {
   confirmLabel?: string;
   onClose: () => void;
   onSuccess?: () => void;
-};
+}
 
 export default function DeleteConfirmSheet({
   open,
@@ -24,7 +24,7 @@ export default function DeleteConfirmSheet({
   confirmLabel = MARKET_MESSAGES.deleteSheet.confirmLabel,
   onClose,
   onSuccess,
-}: DeleteConfirmSheetProps) {
+}: IDeleteConfirmSheetProps) {
   const deleteProduct = useDeleteProduct({
     onSuccess: () => {
       onClose();
@@ -37,7 +37,9 @@ export default function DeleteConfirmSheet({
       open={open && itemId !== null}
       title={title}
       cancelLabel={cancelLabel}
-      confirmLabel={deleteProduct.isPending ? MARKET_MESSAGES.deleteSheet.loadingLabel : confirmLabel}
+      confirmLabel={
+        deleteProduct.isPending ? MARKET_MESSAGES.deleteSheet.loadingLabel : confirmLabel
+      }
       cancelTextClassName="text-[22px] leading-[1.364] tracking-[-0.0946px]"
       loading={deleteProduct.isPending}
       onClose={onClose}

@@ -3,7 +3,7 @@
 import { useEffect, type MouseEvent, type ReactNode } from 'react';
 import Button from '@/components/common/button/Button';
 
-export type ConfirmSheetShellProps = {
+interface IConfirmSheetShellProps {
   open: boolean;
   dimmed?: boolean;
   title: string;
@@ -14,7 +14,7 @@ export type ConfirmSheetShellProps = {
   onClose: () => void;
   onConfirm: () => void;
   children: ReactNode;
-};
+}
 
 export default function ConfirmSheetShell({
   open,
@@ -27,7 +27,7 @@ export default function ConfirmSheetShell({
   onClose,
   onConfirm,
   children,
-}: ConfirmSheetShellProps) {
+}: IConfirmSheetShellProps) {
   useEffect(() => {
     if (!open) return;
 

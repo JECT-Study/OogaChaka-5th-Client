@@ -57,4 +57,19 @@ export const MARKET_MESSAGES = {
     description: '보호자에게 상품 지급을 요청했어요.\n확인이 완료되면 상품을 받을 수 있어요!',
     actionLabel: '마켓으로 돌아가기',
   },
+  leaveDialog: {
+    title: '변경된 사항이 있어요',
+    create: {
+      description:
+        '작성하면서 변경된 사항이 있어요. 지금 이\n페이지를 떠나면 작성한 내용을 잃게 돼요.',
+      secondaryLabel: '등록 그만두기',
+      primaryLabel: '계속 작성하기',
+    },
+    edit: {
+      description:
+        '수정하면서 변경된 사항이 있어요. 지금 이\n페이지를 떠나면 수정한 사항을 잃게 돼요.',
+      secondaryLabel: '수정 그만두기',
+      primaryLabel: '계속 수정하기',
+    },
+  },
 } as const;

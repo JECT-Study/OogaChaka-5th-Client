@@ -2,49 +2,37 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import {
-  ConfirmDialog,
-  MarketProductForm,
-  snackbar,
-  type MarketProductFormValues,
-} from '@/components';
+import { ConfirmDialog, MarketProductForm } from '@/components';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
-import { useCreateProduct } from '@/hook/useGetProduct';
-import { parseMarketError } from '@/service/market';
+import { useCreateProduct } from '@/service/market/useCreateProduct';
+import type { MarketProductFormValues } from '@/types/market/types';
 
 export default function RegisterMarketItemPage() {
   const router = useRouter();
-  const createProduct = useCreateProduct();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [limitModalOpen, setLimitModalOpen] = useState(false);
 
-  async function handleSubmit(values: MarketProductFormValues) {
+  const createProduct = useCreateProduct({
+    onSuccess: () => router.replace(ROUTES.parent.market),
+    onMaxItemsExceeded: () => setLimitModalOpen(true),
+    onError: (message) => setSubmitError(message),
+  });
+
+  function handleSubmit(values: MarketProductFormValues) {
     if (!values.imageFile) {
       setSubmitError(MARKET_MESSAGES.validation.imageRequired);
       return;
     }
 
     setSubmitError(null);
-    try {
-      await createProduct.mutateAsync({
-        request: {
-          name: values.name,
-          price: values.price,
-          purchaseMessage: values.purchaseMessage,
-        },
-        image: values.imageFile,
-      });
-      snackbar(MARKET_MESSAGES.toast.createSuccess, { message: true, position: 'bottom-center' });
-      router.replace(ROUTES.parent.market);
-    } catch (error) {
-      const { code, message } = parseMarketError(error);
-      if (code === 'MAX_ITEMS_EXCEEDED') {
-        setLimitModalOpen(true);
-        return;
-      }
-      setSubmitError(message);
-      snackbar(message, { message: false, position: 'bottom-center' });
-    }
+    createProduct.mutate({
+      request: {
+        name: values.name,
+        price: values.price,
+        purchaseMessage: values.purchaseMessage,
+      },
+      image: values.imageFile,
+    });
   }
 
   return (

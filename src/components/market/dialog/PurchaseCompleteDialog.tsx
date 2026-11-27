@@ -4,7 +4,7 @@ import { Button, Thumbnail } from '@/components';
 import { MARKET_MESSAGES } from '@/constants/market';
 import ConfirmDialogShell from './ConfirmDialogShell';
 
-export type PurchaseCompleteDialogProps = {
+export interface IPurchaseCompleteDialogProps {
   open: boolean;
   thumbnailSrc?: string | null;
   thumbnailAlt?: string;
@@ -13,7 +13,7 @@ export type PurchaseCompleteDialogProps = {
   actionLabel?: string;
   onBackdropClose?: () => void;
   onAction: () => void;
-};
+}
 
 export default function PurchaseCompleteDialog({
   open,
@@ -24,7 +24,7 @@ export default function PurchaseCompleteDialog({
   actionLabel = MARKET_MESSAGES.purchaseCompleteDialog.actionLabel,
   onBackdropClose,
   onAction,
-}: PurchaseCompleteDialogProps) {
+}: IPurchaseCompleteDialogProps) {
   return (
     <ConfirmDialogShell
       open={open}

@@ -5,13 +5,13 @@ import { Close, Thumbnail } from '@/components';
 import type { MarketItem } from '@/types/market/types';
 import MarketPointBadge from './MarketPointBadge';
 
-export type MarketProductCardProps = {
+interface IMarketProductCardProps {
   product: MarketItem;
   href: string;
   eager?: boolean;
   isDeleteMode?: boolean;
   onRequestDelete?: () => void;
-};
+}
 
 export default function MarketProductCard({
   product,
@@ -19,7 +19,7 @@ export default function MarketProductCard({
   eager = false,
   isDeleteMode = false,
   onRequestDelete,
-}: MarketProductCardProps) {
+}: IMarketProductCardProps) {
   const cardBody = (
     <article className="relative min-w-0 text-left">
       <div className="relative">

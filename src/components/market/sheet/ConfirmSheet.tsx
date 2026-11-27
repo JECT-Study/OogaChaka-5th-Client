@@ -1,13 +1,13 @@
 'use client';
 
-import DeleteConfirmSheet, { type DeleteConfirmSheetProps } from './DeleteConfirmSheet';
-import PurchaseConfirmSheet, { type PurchaseConfirmSheetProps } from './PurchaseConfirmSheet';
+import DeleteConfirmSheet, { type IDeleteConfirmSheetProps } from './DeleteConfirmSheet';
+import PurchaseConfirmSheet, { type IPurchaseConfirmSheetProps } from './PurchaseConfirmSheet';
 
-export type ConfirmSheetProps =
-  | ({ type?: 'delete' } & DeleteConfirmSheetProps)
-  | ({ type: 'purchase' } & PurchaseConfirmSheetProps);
+type IConfirmSheetProps =
+  | ({ type?: 'delete' } & IDeleteConfirmSheetProps)
+  | ({ type: 'purchase' } & IPurchaseConfirmSheetProps);
 
-export default function ConfirmSheet(props: ConfirmSheetProps) {
+export default function ConfirmSheet(props: IConfirmSheetProps) {
   if (props.type === 'purchase') {
     const { type: _type, ...purchaseProps } = props;
     return <PurchaseConfirmSheet {...purchaseProps} />;

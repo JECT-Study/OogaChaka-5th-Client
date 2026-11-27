@@ -1,10 +1,10 @@
 import { MARKET_MESSAGES } from '@/constants';
 
-export type MarketGuardianMessageProps = {
+interface IMarketGuardianMessageProps {
   message: string | null;
-};
+}
 
-export default function MarketGuardianMessage({ message }: MarketGuardianMessageProps) {
+export default function MarketGuardianMessage({ message }: IMarketGuardianMessageProps) {
   return (
     <section className="bg-neutral-5 mt-6 flex items-center gap-[9px] rounded-md px-4 py-4">
       <span className="text-label-neutral shrink-0 text-[16px] leading-[1.5] font-semibold tracking-[-0.352px]">

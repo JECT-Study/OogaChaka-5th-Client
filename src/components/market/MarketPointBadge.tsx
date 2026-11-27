@@ -1,9 +1,9 @@
-type MarketPointBadgeProps = {
+interface IMarketPointBadgeProps {
   points: number;
   size?: 'md' | 'sm';
   prefix?: string;
   className?: string;
-};
+}
 
 const SIZE_STYLES = {
   md: {
@@ -23,7 +23,7 @@ export default function MarketPointBadge({
   size = 'md',
   prefix = '',
   className = '',
-}: MarketPointBadgeProps) {
+}: IMarketPointBadgeProps) {
   const styles = SIZE_STYLES[size];
 
   return (

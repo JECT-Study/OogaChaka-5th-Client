@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Suspense, useState } from 'react';
 import {
   ConfirmSheet,
@@ -12,19 +12,12 @@ import {
   MarketProductThumbnail,
 } from '@/components';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
-import { useGetProductDetail } from '@/hook/useGetProduct';
-import { parseMarketError } from '@/service/market';
-
-function parseItemId(raw: string | null): number | null {
-  if (!raw || !/^\d+$/.test(raw)) return null;
-  const parsed = Number(raw);
-  return Number.isSafeInteger(parsed) && parsed >= 1 ? parsed : null;
-}
+import { useMarketItemId } from '@/hook/useMarketItemId';
+import { parseMarketError, useGetProductDetail } from '@/service/market';
 
 function MarketDetailContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const itemId = parseItemId(searchParams.get('itemId'));
+  const itemId = useMarketItemId();
 
   const { data: item, isPending, isError, error, refetch } = useGetProductDetail(itemId);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

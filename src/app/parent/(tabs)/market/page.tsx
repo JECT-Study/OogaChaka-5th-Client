@@ -14,7 +14,7 @@ import {
   MarketProductCard,
 } from '@/components';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
-import { useGetProduct } from '@/hook/useGetProduct';
+import { useGetProduct } from '@/service/market/useGetProduct';
 import { parseMarketError } from '@/service/market';
 import { MARKET_CONSTRAINTS } from '@/types/market/types';
 

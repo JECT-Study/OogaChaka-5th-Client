@@ -38,6 +38,30 @@ export type MarketItemsParams = {
   isActive?: boolean;
 };
 
+export type MarketProductFormValues = {
+  name: string;
+  price: number;
+  purchaseMessage: string | null;
+  imageFile?: File;
+};
+
+export type MarketProductFormInitialValues = {
+  name: string;
+  price: number;
+  purchaseMessage: string | null;
+  imageUrl: string;
+};
+
+export type ImageUploadState = 'empty' | 'loading' | 'ready' | 'error';
+
+export type KebabMenuItem = {
+  id: string;
+  label: string;
+  tone?: 'default' | 'danger';
+  disabled?: boolean;
+  onSelect: () => void;
+};
+
 export type CreateMarketItemInput = {
   request: CreateMarketItemRequest;
   image: File;

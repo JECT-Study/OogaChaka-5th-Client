@@ -2,24 +2,17 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { IconButton, MoreVertical } from '@/components';
+import type { KebabMenuItem } from '@/types/market/types';
 
-export type KebabMenuItem = {
-  id: string;
-  label: string;
-  tone?: 'default' | 'danger';
-  disabled?: boolean;
-  onSelect: () => void;
-};
-
-type MarketKebabMenuProps = {
+interface IMarketKebabMenuProps {
   items: KebabMenuItem[];
   label?: string;
-};
+}
 
 export default function MarketKebabMenu({
   items,
   label = '더보기 메뉴',
-}: MarketKebabMenuProps) {
+}: IMarketKebabMenuProps) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
 

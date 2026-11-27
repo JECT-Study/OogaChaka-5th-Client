@@ -3,7 +3,7 @@
 import { useEffect, type MouseEvent, type ReactNode } from 'react';
 import { Overlay } from '@/components';
 
-export type ConfirmDialogShellProps = {
+interface IConfirmDialogShellProps {
   open: boolean;
   overlayType?: 'bright' | 'dark';
   loading?: boolean;
@@ -11,7 +11,7 @@ export type ConfirmDialogShellProps = {
   className?: string;
   onBackdropClose?: () => void;
   children: ReactNode;
-};
+}
 
 export default function ConfirmDialogShell({
   open,
@@ -21,7 +21,7 @@ export default function ConfirmDialogShell({
   className = '',
   onBackdropClose,
   children,
-}: ConfirmDialogShellProps) {
+}: IConfirmDialogShellProps) {
   useEffect(() => {
     if (!open || !onBackdropClose) return;
 

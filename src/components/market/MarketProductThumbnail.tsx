@@ -1,11 +1,11 @@
 import { Thumbnail } from '@/components';
 
-export type MarketProductThumbnailProps = {
+interface IMarketProductThumbnailProps {
   imageUrl: string | null;
   name: string;
-};
+}
 
-export default function MarketProductThumbnail({ imageUrl, name }: MarketProductThumbnailProps) {
+export default function MarketProductThumbnail({ imageUrl, name }: IMarketProductThumbnailProps) {
   return (
     <div className="relative overflow-hidden rounded-lg">
       <Thumbnail

@@ -3,13 +3,13 @@
 import { ChevronLeft, Header, IconButton } from '@/components';
 import MarketKebabMenu from '@/components/market/MarketKebabMenu';
 
-export type MarketHeaderProps = {
+interface IMarketHeaderProps {
   title?: string;
   onBack: () => void;
   onDelete?: () => void;
   onEdit?: () => void;
   deleteDisabled?: boolean;
-};
+}
 
 export default function MarketHeader({
   title = '상품 상세',
@@ -17,7 +17,7 @@ export default function MarketHeader({
   onDelete,
   onEdit,
   deleteDisabled = false,
-}: MarketHeaderProps) {
+}: IMarketHeaderProps) {
   const menuItems = [
     ...(onDelete
       ? [{ id: 'delete', label: '삭제하기', disabled: deleteDisabled, onSelect: onDelete }]

@@ -10,7 +10,7 @@ import {
   MarketProductCard,
 } from '@/components';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
-import { useGetProduct } from '@/hook/useGetProduct';
+import { useGetProduct } from '@/service/market/useGetProduct';
 import { parseMarketError } from '@/service/market';
 
 const HEADER_PURCHASE_LIST_STYLE = {

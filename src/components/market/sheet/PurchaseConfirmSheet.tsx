@@ -3,12 +3,12 @@
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import { MARKET_MESSAGES } from '@/constants/market';
-import { usePurchaseProduct } from '@/hook/useGetProduct';
+import { usePurchaseProduct } from '@/service/market/usePurchaseProduct';
 import type { MarketPurchase } from '@/types/market/types';
 import MarketPointBadge from '../MarketPointBadge';
 import ConfirmSheetShell from './ConfirmSheetShell';
 
-export type PurchaseConfirmSheetProps = {
+export interface IPurchaseConfirmSheetProps {
   open: boolean;
   itemId: number | null;
   title?: string;
@@ -18,7 +18,7 @@ export type PurchaseConfirmSheetProps = {
   confirmLabel?: string;
   onClose: () => void;
   onSuccess?: (purchase: MarketPurchase) => void;
-};
+}
 
 export default function PurchaseConfirmSheet({
   open,
@@ -30,7 +30,7 @@ export default function PurchaseConfirmSheet({
   confirmLabel = MARKET_MESSAGES.purchaseSheet.confirmLabel,
   onClose,
   onSuccess,
-}: PurchaseConfirmSheetProps) {
+}: IPurchaseConfirmSheetProps) {
   // 같은 구매 시도의 재요청은 동일 Idempotency-Key를 사용하고, 시트를 새로 열면 새 키를 발급한다.
   const idempotencyKeyRef = useRef<string | null>(null);
 

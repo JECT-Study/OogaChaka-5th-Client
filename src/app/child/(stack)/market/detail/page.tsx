@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Suspense, useState } from 'react';
 import {
   Button,
@@ -15,22 +15,15 @@ import {
   snackbar,
 } from '@/components';
 import { MARKET_MESSAGES, ROUTES } from '@/constants';
-import { useGetProductDetail } from '@/hook/useGetProduct';
-import { parseMarketError } from '@/service/market';
+import { useMarketItemId } from '@/hook/useMarketItemId';
+import { parseMarketError, useGetProductDetail } from '@/service/market';
 
 // TODO: 자녀 보유 포인트 조회 API 연동 시 실제 포인트로 교체
 const CHILD_POINTS_PLACEHOLDER = 400;
 
-function parseItemId(raw: string | null): number | null {
-  if (!raw || !/^\d+$/.test(raw)) return null;
-  const parsed = Number(raw);
-  return Number.isSafeInteger(parsed) && parsed >= 1 ? parsed : null;
-}
-
 function ChildMarketDetailContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const itemId = parseItemId(searchParams.get('itemId'));
+  const itemId = useMarketItemId();
 
   const { data: item, isPending, isError, error, refetch } = useGetProductDetail(itemId);
   const [purchaseSheetOpen, setPurchaseSheetOpen] = useState(false);
