@@ -82,12 +82,11 @@ export async function updateMarketItem({
   return response.data.data;
 }
 
-// [삭제 기능 보류]
-// export async function deleteMarketItem(itemId: number): Promise<void> {
-  // await fetchApi(`/api/v1/market/items/${itemId}`, {
-    // method: 'DELETE',
-  // });
-// }
+export async function deleteMarketItem(itemId: number): Promise<void> {
+  await fetchApi(`/api/v1/market/items/${itemId}`, {
+    method: 'DELETE',
+  });
+}
 
 const ERROR_MESSAGES: Record<string, string> = {
   INVALID_ITEM_ID: '유효하지 않은 상품 정보예요.',

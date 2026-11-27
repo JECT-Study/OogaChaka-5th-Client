@@ -1,16 +1,12 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
-// [삭제 기능 보류] import { useState } from 'react';
-import { ChevronLeft, Header, IconButton, Thumbnail } from '@/components';
-// [삭제 기능 보류] import { snackbar } from '@/components';
-import Button from '@/components/common/button/Button';
+import { Suspense, useState } from 'react';
+import { ChevronLeft, Header, IconButton, snackbar, Thumbnail } from '@/components';
 import Empty from '@/components/overlay/Empty';
-// [삭제 기능 보류] import ConfirmDialog from '@/components/market/ConfirmDialog';
+import DeleteConfirmSheet from '@/components/market/DeleteConfirmSheet';
 import MarketKebabMenu from '@/components/market/MarketKebabMenu';
-import { useGetProductDetail } from '@/hook/useGetProduct';
-// [삭제 기능 보류] import { useDeleteProduct } from '@/hook/useGetProduct';
+import { useDeleteProduct, useGetProductDetail } from '@/hook/useGetProduct';
 import { parseMarketError } from '@/service/market';
 import { ROUTES } from '@/constants/routes';
 
@@ -26,27 +22,25 @@ function MarketDetailContent() {
   const itemId = parseItemId(searchParams.get('itemId'));
 
   const { data: item, isPending, isError, error, refetch } = useGetProductDetail(itemId);
-  // [삭제 기능 보류]
-  // const deleteProduct = useDeleteProduct();
-  // const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const deleteProduct = useDeleteProduct();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   function goToList() {
     router.push(ROUTES.parent.market);
   }
 
-  // [삭제 기능 보류]
-  // async function handleConfirmDelete() {
-    // if (!item || deleteProduct.isPending) return;
-    // try {
-      // await deleteProduct.mutateAsync(item.itemId);
-      // setDeleteDialogOpen(false);
-      // snackbar('상품을 삭제했어요.', { message: true, position: 'bottom-center' });
-      // router.replace(ROUTES.parent.market);
-    // } catch (mutationError) {
-      // const { message } = parseMarketError(mutationError);
-      // snackbar(message, { message: false, position: 'bottom-center' });
-    // }
-  // }
+  async function handleConfirmDelete() {
+    if (!item || deleteProduct.isPending) return;
+    try {
+      await deleteProduct.mutateAsync(item.itemId);
+      setDeleteDialogOpen(false);
+      snackbar('상품을 성공적으로 삭제했어요!', { message: true, position: 'bottom-center' });
+      router.replace(ROUTES.parent.market);
+    } catch (mutationError) {
+      const { message } = parseMarketError(mutationError);
+      snackbar(message, { message: false, position: 'bottom-center' });
+    }
+  }
 
   if (itemId === null) {
     return (
@@ -135,10 +129,8 @@ function MarketDetailContent() {
                 {
                   id: 'delete',
                   label: '삭제하기',
-                  // [삭제 기능 보류] 메뉴는 보이게 두고 동작만 막아 둔다.
-                  // disabled: deleteProduct.isPending,
-                  // onSelect: () => setDeleteDialogOpen(true),
-                  onSelect: () => {},
+                  disabled: deleteProduct.isPending,
+                  onSelect: () => setDeleteDialogOpen(true),
                 },
                 {
                   id: 'edit',
@@ -151,7 +143,7 @@ function MarketDetailContent() {
         />
       </div>
 
-      <div className="-mx-5 min-h-0 flex-1 overflow-y-auto px-5 pt-3">
+      <div className="-mx-5 min-h-0 flex-1 overflow-y-auto px-5 pt-3 pb-[calc(24px+env(safe-area-inset-bottom,0px))]">
         {/* 상품 이미지 (Figma 981:33022: 335x315, radius 16px) */}
         <div className="relative overflow-hidden rounded-lg">
           <Thumbnail
@@ -193,34 +185,12 @@ function MarketDetailContent() {
         </section>
       </div>
 
-      {/* 하단 CTA (Figma Button+Gradient Scrim: pt 40px, px 20px, pb 20px + safe-area) */}
-      <div className="shrink-0 -mx-5 bg-gradient-to-t from-static-white from-80% to-transparent px-5 pt-10 pb-[calc(20px+env(safe-area-inset-bottom,0px))]">
-        <Button
-          size="large"
-          variant="neutral"
-          appearance="filled"
-          width="100%"
-          // [삭제 기능 보류] disabled={deleteProduct.isPending}
-          className="enabled:bg-lavender-grey-900!"
-          onClick={() => router.push(ROUTES.parent.marketEdit(item.itemId))}
-        >
-          수정하기
-        </Button>
-      </div>
-
-      {/* [삭제 기능 보류]
-      <ConfirmDialog
+      <DeleteConfirmSheet
         open={deleteDialogOpen}
-        title="상품을 삭제할까요?"
-        description={'삭제한 상품은 자녀 마켓에서 사라지고\n다시 되돌릴 수 없어요.'}
-        secondaryLabel="삭제하기"
-        primaryLabel="취소"
-        secondaryTone="danger"
         loading={deleteProduct.isPending}
-        onSecondary={() => void handleConfirmDelete()}
-        onPrimary={() => setDeleteDialogOpen(false)}
+        onCancel={() => setDeleteDialogOpen(false)}
+        onConfirm={() => void handleConfirmDelete()}
       />
-      */}
     </div>
   );
 }

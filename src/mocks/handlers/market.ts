@@ -484,32 +484,31 @@ export const marketHandlers = [
     return HttpResponse.json({ data: updated });
   }),
 
-  // [삭제 기능 보류]
-  // http.delete('*/api/v1/market/items/:id', ({ request, params }) => {
-    // const url = new URL(request.url);
-    // const itemId = parseItemId(params.id);
-    // if (itemId === null) {
-      // return problemResponse(
-        // url.pathname,
-        // 400,
-        // 'INVALID_ITEM_ID',
-        // 'Bad Request',
-        // 'id가 1 이상의 정수가 아님',
-      // );
-    // }
+  http.delete('*/api/v1/market/items/:id', ({ request, params }) => {
+    const url = new URL(request.url);
+    const itemId = parseItemId(params.id);
+    if (itemId === null) {
+      return problemResponse(
+        url.pathname,
+        400,
+        'INVALID_ITEM_ID',
+        'Bad Request',
+        'id가 1 이상의 정수가 아님',
+      );
+    }
 
-    // const index = items.findIndex((item) => item.itemId === itemId);
-    // if (index === -1) {
-      // return problemResponse(
-        // url.pathname,
-        // 404,
-        // 'MARKET_ITEM_NOT_FOUND',
-        // 'Not Found',
-        // '해당 상품이 없음',
-      // );
-    // }
+    const index = items.findIndex((item) => item.itemId === itemId);
+    if (index === -1) {
+      return problemResponse(
+        url.pathname,
+        404,
+        'MARKET_ITEM_NOT_FOUND',
+        'Not Found',
+        '해당 상품이 없음',
+      );
+    }
 
-    // items.splice(index, 1);
-    // return new HttpResponse(null, { status: 204 });
-  // }),
+    items.splice(index, 1);
+    return new HttpResponse(null, { status: 204 });
+  }),
 ];

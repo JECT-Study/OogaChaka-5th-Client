@@ -3,46 +3,44 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, type CSSProperties } from 'react';
-import { FloatButton, Header, Thumbnail } from '@/components';
-// [삭제 기능 보류] import { snackbar } from '@/components';
+import { FloatButton, Header, snackbar, Thumbnail } from '@/components';
+import Close from '@/components/Icon/Close';
 import Button from '@/components/common/button/Button';
 import Empty from '@/components/overlay/Empty';
 import ConfirmDialog from '@/components/market/ConfirmDialog';
+import DeleteConfirmSheet from '@/components/market/DeleteConfirmSheet';
 import MarketKebabMenu from '@/components/market/MarketKebabMenu';
-import { useGetProduct } from '@/hook/useGetProduct';
-// [삭제 기능 보류] import { useDeleteProduct } from '@/hook/useGetProduct';
+import { useDeleteProduct, useGetProduct } from '@/hook/useGetProduct';
 import { parseMarketError } from '@/service/market';
 import { MARKET_CONSTRAINTS, type MarketItem } from '@/types/market/types';
 import { ROUTES } from '@/constants/routes';
 
-type ManageMode = 'normal' | 'edit' | 'delete';
-
-const HEADER_ACTION_STYLE = {
-  '--button-bg': 'var(--color-primary-normal)',
-  '--button-border': 'var(--color-periwinkle-400)',
-  borderWidth: '1.5px',
+const HEADER_DELETE_DONE_STYLE = {
+  '--button-bg': 'var(--color-lavender-grey-900)',
+  '--button-pressed-bg': 'var(--color-lavender-grey-950)',
+  '--button-focused-bg': 'var(--color-lavender-grey-800)',
 } as CSSProperties;
 
 export default function MarketPage() {
   const router = useRouter();
-  const [manageMode, setManageMode] = useState<ManageMode>('normal');
+  const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
   const [limitModalOpen, setLimitModalOpen] = useState(false);
-  // [삭제 기능 보류] const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { data, isPending, isError, error, refetch } = useGetProduct();
-  // [삭제 기능 보류] const deleteProduct = useDeleteProduct();
+  const deleteProduct = useDeleteProduct();
 
   const products = data?.items ?? [];
   const itemCount = data?.totalElements ?? products.length;
   const selectedItem = products.find((item) => item.itemId === selectedItemId) ?? null;
 
-  function enterManageMode(mode: 'edit' | 'delete') {
-    setManageMode(mode);
+  function enterDeleteMode() {
+    setIsDeleteMode(true);
     setSelectedItemId(null);
   }
 
-  function exitManageMode() {
-    setManageMode('normal');
+  function exitDeleteMode() {
+    setIsDeleteMode(false);
     setSelectedItemId(null);
   }
 
@@ -54,37 +52,23 @@ export default function MarketPage() {
     router.push(ROUTES.parent.marketRegister);
   }
 
-  function handleHeaderActionClick() {
-    if (!selectedItem) {
-      exitManageMode();
-      return;
+  async function handleConfirmDelete() {
+    if (!selectedItem || deleteProduct.isPending) return;
+    const isLastItem = products.length <= 1;
+    try {
+      await deleteProduct.mutateAsync(selectedItem.itemId);
+      setDeleteDialogOpen(false);
+      if (isLastItem) {
+        exitDeleteMode();
+      } else {
+        setSelectedItemId(null);
+      }
+      snackbar('상품을 성공적으로 삭제했어요!', { message: true, position: 'bottom-center' });
+    } catch (mutationError) {
+      const { message } = parseMarketError(mutationError);
+      snackbar(message, { message: false, position: 'bottom-center' });
     }
-
-    if (manageMode === 'edit') {
-      // 관리 모드를 먼저 풀면 이동 전에 일반 목록이 한 번 더 그려지므로 바로 이동한다.
-      router.push(ROUTES.parent.marketEdit(selectedItem.itemId));
-      return;
-    }
-
-    // [삭제 기능 보류]
-    // if (manageMode === 'delete') {
-      // setDeleteDialogOpen(true);
-    // }
   }
-
-  // [삭제 기능 보류]
-  // async function handleConfirmDelete() {
-    // if (!selectedItem || deleteProduct.isPending) return;
-    // try {
-      // await deleteProduct.mutateAsync(selectedItem.itemId);
-      // setDeleteDialogOpen(false);
-      // exitManageMode();
-      // snackbar('상품을 삭제했어요.', { message: true, position: 'bottom-center' });
-    // } catch (mutationError) {
-      // const { message } = parseMarketError(mutationError);
-      // snackbar(message, { message: false, position: 'bottom-center' });
-    // }
-  // }
 
   function renderProducts() {
     if (isPending) {
@@ -140,18 +124,10 @@ export default function MarketPage() {
             product={product}
             // 첫 화면에 보이는 위쪽 두 줄은 즉시 로딩한다.
             eager={index < 4}
-            selectable={manageMode !== 'normal'}
-            selected={selectedItemId === product.itemId}
-            onToggleSelect={() => {
+            isDeleteMode={isDeleteMode}
+            onRequestDelete={() => {
               setSelectedItemId(product.itemId);
-              if (manageMode === 'edit') {
-                // 선택 표시를 유지한 채 바로 이동한다. 페이지를 떠나면 관리 모드 상태는 초기화된다.
-                router.push(ROUTES.parent.marketEdit(product.itemId));
-              }
-              // [삭제 기능 보류]
-              // else if (manageMode === 'delete') {
-              //   setDeleteDialogOpen(true);
-              // }
+              setDeleteDialogOpen(true);
             }}
           />
         ))}
@@ -166,36 +142,27 @@ export default function MarketPage() {
           type="sub"
           title="포인트 마켓"
           trailing={
-            manageMode === 'normal' ? (
+            isDeleteMode ? (
+              <Button
+                size="small"
+                variant="neutral"
+                appearance="filled"
+                style={HEADER_DELETE_DONE_STYLE}
+                onClick={exitDeleteMode}
+              >
+                완료
+              </Button>
+            ) : (
               <MarketKebabMenu
                 items={[
                   {
                     id: 'delete',
                     label: '삭제하기',
                     disabled: products.length === 0,
-                    // [삭제 기능 보류] 메뉴는 보이게 두고 동작만 막아 둔다.
-                    // onSelect: () => enterManageMode('delete'),
-                    onSelect: () => {},
-                  },
-                  {
-                    id: 'edit',
-                    label: '수정하기',
-                    disabled: products.length === 0,
-                    onSelect: () => enterManageMode('edit'),
+                    onSelect: enterDeleteMode,
                   },
                 ]}
               />
-            ) : (
-              <Button
-                size="small"
-                variant="primary"
-                appearance="filled"
-                style={HEADER_ACTION_STYLE}
-                className="border border-periwinkle-400"
-                onClick={handleHeaderActionClick}
-              >
-                {manageMode === 'delete' ? '삭제하기' : '저장하기'}
-              </Button>
             )
           }
         />
@@ -203,7 +170,7 @@ export default function MarketPage() {
 
       {renderProducts()}
 
-      {manageMode === 'normal' && (
+      {!isDeleteMode && (
         <FloatButton
           icon={<span className="text-3xl leading-none">+</span>}
           label="상품 등록"
@@ -223,61 +190,57 @@ export default function MarketPage() {
         primaryLabel="등록 그만두기"
         onSecondary={() => {
           setLimitModalOpen(false);
-          // [삭제 기능 보류] 삭제 모드 대신 수정 모드로 진입
-          // enterManageMode('delete');
-          enterManageMode('edit');
+          enterDeleteMode();
         }}
         onPrimary={() => setLimitModalOpen(false)}
       />
 
-      {/* 상품 삭제 확인 모달 */}
-      {/* [삭제 기능 보류]
-      <ConfirmDialog
+      {/* 상품 삭제 확인 바텀시트 (Figma 1400:15568 / 1425:16418) */}
+      <DeleteConfirmSheet
         open={deleteDialogOpen && Boolean(selectedItem)}
-        title="상품을 삭제할까요?"
-        description={
-          selectedItem
-            ? `'${selectedItem.name}' 상품을 삭제하면\n자녀 마켓에서 더 이상 볼 수 없어요.`
-            : undefined
-        }
-        secondaryLabel="삭제하기"
-        primaryLabel="취소"
-        secondaryTone="danger"
         loading={deleteProduct.isPending}
-        onSecondary={() => void handleConfirmDelete()}
-        onPrimary={() => setDeleteDialogOpen(false)}
+        onCancel={() => {
+          setDeleteDialogOpen(false);
+          setSelectedItemId(null);
+        }}
+        onConfirm={() => void handleConfirmDelete()}
       />
-      */}
     </div>
   );
 }
 
 function ProductCard({
   product,
-  selectable,
-  selected,
-  onToggleSelect,
+  isDeleteMode,
+  onRequestDelete,
   eager,
 }: {
   product: MarketItem;
   eager: boolean;
-  selectable: boolean;
-  selected: boolean;
-  onToggleSelect: () => void;
+  isDeleteMode: boolean;
+  onRequestDelete: () => void;
 }) {
   const cardBody = (
     <article className="relative min-w-0 text-left">
-      <div className="relative overflow-hidden rounded-md">
-        <Thumbnail
-          src={product.imageUrl}
-          alt={product.name}
-          loading={eager ? 'eager' : undefined}
-          className="w-full rounded-none"
-        />
-        <span className="pointer-events-none absolute inset-0 bg-[rgba(143,143,143,0.1)]" />
-        {/* 선택 테두리는 오버레이로 그려 썸네일 크기가 바뀌지 않게 한다. */}
-        {selected && (
-          <span className="pointer-events-none absolute inset-0 rounded-md border-2 border-primary-strong" />
+      <div className="relative">
+        <div className="relative overflow-hidden rounded-md">
+          <Thumbnail
+            src={product.imageUrl}
+            alt={product.name}
+            loading={eager ? 'eager' : undefined}
+            className="w-full rounded-none"
+          />
+          <span className="pointer-events-none absolute inset-0 bg-[rgba(143,143,143,0.1)]" />
+        </div>
+        {isDeleteMode && (
+          <button
+            type="button"
+            aria-label={`${product.name} 삭제`}
+            onClick={onRequestDelete}
+            className="bg-neutral-5 shadow-ds-small active:bg-neutral-10 absolute -top-[15px] -left-[15px] z-10 flex size-[30px] cursor-pointer items-center justify-center rounded-full transition-colors"
+          >
+            <Close size={14} color="var(--color-cool-neutral-40)" aria-hidden="true" />
+          </button>
         )}
       </div>
       <span className="mt-3 block truncate text-[18px] font-semibold leading-[1.445] tracking-[-0.0072px] text-label-normal">
@@ -294,17 +257,8 @@ function ProductCard({
     </article>
   );
 
-  if (selectable) {
-    return (
-      <button
-        type="button"
-        aria-pressed={selected}
-        onClick={onToggleSelect}
-        className="block w-full min-w-0 focus-visible:outline-none"
-      >
-        {cardBody}
-      </button>
-    );
+  if (isDeleteMode) {
+    return <div className="min-w-0">{cardBody}</div>;
   }
 
   return (
