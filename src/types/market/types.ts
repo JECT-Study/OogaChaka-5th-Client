@@ -10,6 +10,7 @@ export type UpdateMarketItemRequest = {
   price?: number;
   description?: string | null;
   purchaseMessage?: string | null;
+  isActive?: boolean;
 };
 
 export type MarketItem = {
@@ -19,6 +20,7 @@ export type MarketItem = {
   imageUrl: string;
   price: number;
   purchaseMessage: string | null;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string | null;
 };
@@ -33,6 +35,31 @@ export type MarketItemsPage = {
 export type MarketItemsParams = {
   page?: number;
   size?: number;
+  isActive?: boolean;
+};
+
+export type MarketProductFormValues = {
+  name: string;
+  price: number;
+  purchaseMessage: string | null;
+  imageFile?: File;
+};
+
+export type MarketProductFormInitialValues = {
+  name: string;
+  price: number;
+  purchaseMessage: string | null;
+  imageUrl: string;
+};
+
+export type ImageUploadState = 'empty' | 'loading' | 'ready' | 'error';
+
+export type KebabMenuItem = {
+  id: string;
+  label: string;
+  tone?: 'default' | 'danger';
+  disabled?: boolean;
+  onSelect: () => void;
 };
 
 export type CreateMarketItemInput = {
@@ -46,14 +73,40 @@ export type UpdateMarketItemInput = {
   image?: File;
 };
 
+export type MarketOrderStatus = 'PENDING' | 'FULFILLED';
+
+export type PurchaseMarketItemInput = {
+  itemId: number;
+  expectedPrice: number;
+  idempotencyKey?: string;
+};
+
+export type MarketPurchase = {
+  orderId: number;
+  itemId: number;
+  productName: string;
+  productImageUrl: string;
+  spentPoints: number;
+  remainingPoints: number;
+  status: MarketOrderStatus;
+  purchaseMessage: string | null;
+  purchasedAt: string;
+  fulfilledAt: string | null;
+};
+
 export type MarketApiErrorCode =
   | 'INVALID_QUERY_PARAMETER'
   | 'INVALID_ITEM_ID'
   | 'INVALID_PRODUCT_REQUEST'
+  | 'INVALID_PURCHASE_REQUEST'
   | 'INVALID_IMAGE'
   | 'IMAGE_TOO_LARGE'
   | 'UNSUPPORTED_MEDIA_TYPE'
   | 'MARKET_ITEM_NOT_FOUND'
+  | 'ITEM_NOT_FOR_SALE'
+  | 'PRICE_CHANGED'
+  | 'INSUFFICIENT_POINTS'
+  | 'IDEMPOTENCY_KEY_CONFLICT'
   | 'MAX_ITEMS_EXCEEDED'
   | 'UNAUTHENTICATED'
   | 'FORBIDDEN'

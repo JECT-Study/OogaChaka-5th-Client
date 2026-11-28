@@ -3,10 +3,22 @@ import {
   MARKET_CONSTRAINTS,
   type CreateMarketItemRequest,
   type MarketItem,
+  type MarketPurchase,
   type UpdateMarketItemRequest,
 } from '@/types/market/types';
 
 let nextItemId = 14;
+let nextOrderId = 701;
+let childPoints = 400;
+
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+const purchases: MarketPurchase[] = [];
+const purchaseIdempotencyMap = new Map<
+  string,
+  { itemId: number; expectedPrice: number; response: MarketPurchase }
+>();
 
 // 상품마다 이미지 주소가 달라야 next/image의 LCP 검사가 상품별로 동작한다.
 // (같은 주소를 공유하면 아래쪽 lazy 이미지가 위쪽 eager 이미지를 덮어써 경고가 난다)
@@ -18,6 +30,7 @@ const items: MarketItem[] = [
     imageUrl: '/images/market-reward.png?item=13',
     price: 2000,
     purchaseMessage: '보고 싶은 영화 골라 봐!',
+    isActive: true,
     createdAt: '2026-11-05T13:00:00Z',
     updatedAt: null,
   },
@@ -28,6 +41,7 @@ const items: MarketItem[] = [
     imageUrl: '/images/market-reward.png?item=12',
     price: 800,
     purchaseMessage: '숙제 끝내고 신나게 하자!',
+    isActive: true,
     createdAt: '2026-11-04T13:00:00Z',
     updatedAt: null,
   },
@@ -38,6 +52,7 @@ const items: MarketItem[] = [
     imageUrl: '/images/market-reward.png?item=11',
     price: 1500,
     purchaseMessage: '오늘 저녁은 치킨이다!',
+    isActive: true,
     createdAt: '2026-11-03T13:00:00Z',
     updatedAt: null,
   },
@@ -48,6 +63,7 @@ const items: MarketItem[] = [
     imageUrl: '/images/market-reward.png?item=10',
     price: 700,
     purchaseMessage: null,
+    isActive: true,
     createdAt: '2026-11-02T13:00:00Z',
     updatedAt: null,
   },
@@ -58,6 +74,7 @@ const items: MarketItem[] = [
     imageUrl: '/images/market-reward.png?item=9',
     price: 1000,
     purchaseMessage: '읽고 싶은 책 마음껏 골라!',
+    isActive: true,
     createdAt: '2026-11-01T13:00:00Z',
     updatedAt: null,
   },
@@ -68,6 +85,7 @@ const items: MarketItem[] = [
     imageUrl: '/images/market-reward.png?item=8',
     price: 600,
     purchaseMessage: '주말에 같이 달리자!',
+    isActive: true,
     createdAt: '2026-10-31T13:00:00Z',
     updatedAt: null,
   },
@@ -78,6 +96,7 @@ const items: MarketItem[] = [
     imageUrl: '/images/market-reward.png?item=7',
     price: 350,
     purchaseMessage: '고생했어, 맛있는 거 먹자!',
+    isActive: true,
     createdAt: '2026-10-30T13:00:00Z',
     updatedAt: null,
   },
@@ -88,6 +107,7 @@ const items: MarketItem[] = [
     imageUrl: '/images/market-reward.png?item=6',
     price: 500,
     purchaseMessage: '꾸준히 해내서 멋져!',
+    isActive: true,
     createdAt: '2026-10-29T13:00:00Z',
     updatedAt: null,
   },
@@ -98,6 +118,7 @@ const items: MarketItem[] = [
     imageUrl: '/images/market-reward.png?item=5',
     price: 1200,
     purchaseMessage: '이번 주말에 같이 가자!',
+    isActive: true,
     createdAt: '2026-10-28T13:00:00Z',
     updatedAt: null,
   },
@@ -108,6 +129,7 @@ const items: MarketItem[] = [
     imageUrl: '/images/market-reward.png?item=4',
     price: 400,
     purchaseMessage: '열심히 모았구나!',
+    isActive: true,
     createdAt: '2026-10-27T13:00:00Z',
     updatedAt: null,
   },
@@ -118,6 +140,7 @@ const items: MarketItem[] = [
     imageUrl: '/images/market-reward.png?item=3',
     price: 300,
     purchaseMessage: null,
+    isActive: true,
     createdAt: '2026-10-26T13:00:00Z',
     updatedAt: null,
   },
@@ -128,6 +151,7 @@ const items: MarketItem[] = [
     imageUrl: '/images/market-reward.png?item=2',
     price: 600,
     purchaseMessage: '같이 즐겁게 놀자!',
+    isActive: true,
     createdAt: '2026-10-25T13:00:00Z',
     updatedAt: '2026-10-26T09:00:00Z',
   },
@@ -211,8 +235,10 @@ export const marketHandlers = [
     const url = new URL(request.url);
     const pageValue = url.searchParams.get('page') ?? '0';
     const sizeValue = url.searchParams.get('size') ?? '20';
+    const isActiveValue = url.searchParams.get('isActive') ?? 'true';
     const page = Number(pageValue);
     const size = Number(sizeValue);
+    const isValidBoolean = isActiveValue === 'true' || isActiveValue === 'false';
 
     if (
       !/^\d+$/.test(pageValue) ||
@@ -220,23 +246,32 @@ export const marketHandlers = [
       !Number.isSafeInteger(page) ||
       !Number.isSafeInteger(size) ||
       size < 1 ||
-      size > 100
+      size > 100 ||
+      !isValidBoolean
     ) {
       return problemResponse(
         url.pathname,
         400,
         'INVALID_QUERY_PARAMETER',
         'Bad Request',
-        '조회 조건이 유효하지 않습니다.',
+        '페이지 범위 또는 isActive가 유효한 boolean이 아님',
       );
     }
 
+    const isActive = isActiveValue === 'true';
+    const filtered = items
+      .filter((item) => item.isActive === isActive)
+      .toSorted((a, b) => {
+        const timeDiff = Date.parse(b.createdAt) - Date.parse(a.createdAt);
+        return timeDiff !== 0 ? timeDiff : b.itemId - a.itemId;
+      });
+
     return HttpResponse.json({
       data: {
-        items: items.slice(page * size, (page + 1) * size),
+        items: filtered.slice(page * size, (page + 1) * size),
         page,
         size,
-        totalElements: items.length,
+        totalElements: filtered.length,
       },
     });
   }),
@@ -328,7 +363,8 @@ export const marketHandlers = [
       imageUrl,
       price,
       purchaseMessage,
-        createdAt: new Date().toISOString(),
+      isActive: true,
+      createdAt: new Date().toISOString(),
       updatedAt: null,
     };
     items.unshift(created);
@@ -484,32 +520,139 @@ export const marketHandlers = [
     return HttpResponse.json({ data: updated });
   }),
 
-  // [삭제 기능 보류]
-  // http.delete('*/api/v1/market/items/:id', ({ request, params }) => {
-    // const url = new URL(request.url);
-    // const itemId = parseItemId(params.id);
-    // if (itemId === null) {
-      // return problemResponse(
-        // url.pathname,
-        // 400,
-        // 'INVALID_ITEM_ID',
-        // 'Bad Request',
-        // 'id가 1 이상의 정수가 아님',
-      // );
-    // }
+  http.delete('*/api/v1/market/items/:id', ({ request, params }) => {
+    const url = new URL(request.url);
+    const itemId = parseItemId(params.id);
+    if (itemId === null) {
+      return problemResponse(
+        url.pathname,
+        400,
+        'INVALID_ITEM_ID',
+        'Bad Request',
+        'id가 1 이상의 정수가 아님',
+      );
+    }
 
-    // const index = items.findIndex((item) => item.itemId === itemId);
-    // if (index === -1) {
-      // return problemResponse(
-        // url.pathname,
-        // 404,
-        // 'MARKET_ITEM_NOT_FOUND',
-        // 'Not Found',
-        // '해당 상품이 없음',
-      // );
-    // }
+    const index = items.findIndex((item) => item.itemId === itemId);
+    if (index === -1) {
+      return problemResponse(
+        url.pathname,
+        404,
+        'MARKET_ITEM_NOT_FOUND',
+        'Not Found',
+        '해당 상품이 없음',
+      );
+    }
 
-    // items.splice(index, 1);
-    // return new HttpResponse(null, { status: 204 });
-  // }),
+    items.splice(index, 1);
+    return new HttpResponse(null, { status: 204 });
+  }),
+
+  http.post('*/api/v1/market/items/:id/purchases', async ({ request, params }) => {
+    const url = new URL(request.url);
+    const itemId = parseItemId(params.id);
+    const idempotencyKey = request.headers.get('Idempotency-Key')?.trim() ?? '';
+
+    let body: { expectedPrice?: unknown } | null = null;
+    try {
+      body = (await request.json()) as { expectedPrice?: unknown };
+    } catch {
+      body = null;
+    }
+
+    const expectedPrice = body?.expectedPrice;
+    if (
+      itemId === null ||
+      !UUID_REGEX.test(idempotencyKey) ||
+      typeof expectedPrice !== 'number' ||
+      !Number.isInteger(expectedPrice) ||
+      expectedPrice < 1
+    ) {
+      return problemResponse(
+        url.pathname,
+        400,
+        'INVALID_PURCHASE_REQUEST',
+        'Bad Request',
+        'id·expectedPrice가 양의 정수가 아니거나 멱등성 키가 누락·유효하지 않음',
+      );
+    }
+
+    const existing = purchaseIdempotencyMap.get(idempotencyKey);
+    if (existing) {
+      if (existing.itemId === itemId && existing.expectedPrice === expectedPrice) {
+        return HttpResponse.json({ data: existing.response }, { status: 201 });
+      }
+      return problemResponse(
+        url.pathname,
+        409,
+        'IDEMPOTENCY_KEY_CONFLICT',
+        'Conflict',
+        '같은 키를 서로 다른 구매 요청에 사용함',
+      );
+    }
+
+    const item = items.find((entry) => entry.itemId === itemId);
+    if (!item) {
+      return problemResponse(
+        url.pathname,
+        404,
+        'MARKET_ITEM_NOT_FOUND',
+        'Not Found',
+        '상품이 존재하지 않음',
+      );
+    }
+
+    if (!item.isActive) {
+      return problemResponse(
+        url.pathname,
+        409,
+        'ITEM_NOT_FOR_SALE',
+        'Conflict',
+        '현재 판매 중지된 상품',
+      );
+    }
+
+    if (item.price !== expectedPrice) {
+      return problemResponse(
+        url.pathname,
+        409,
+        'PRICE_CHANGED',
+        'Conflict',
+        '화면에서 확인한 가격과 서버의 현재 가격이 다름',
+      );
+    }
+
+    if (childPoints < item.price) {
+      return problemResponse(
+        url.pathname,
+        409,
+        'INSUFFICIENT_POINTS',
+        'Conflict',
+        '현재 잔액이 상품 가격보다 적음',
+      );
+    }
+
+    childPoints -= item.price;
+    const created: MarketPurchase = {
+      orderId: nextOrderId++,
+      itemId: item.itemId,
+      productName: item.name,
+      productImageUrl: item.imageUrl,
+      spentPoints: item.price,
+      remainingPoints: childPoints,
+      status: 'PENDING',
+      purchaseMessage: item.purchaseMessage,
+      purchasedAt: new Date().toISOString(),
+      fulfilledAt: null,
+    };
+
+    purchases.unshift(created);
+    purchaseIdempotencyMap.set(idempotencyKey, {
+      itemId,
+      expectedPrice,
+      response: created,
+    });
+
+    return HttpResponse.json({ data: created }, { status: 201 });
+  }),
 ];

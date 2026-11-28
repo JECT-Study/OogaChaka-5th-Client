@@ -15,6 +15,8 @@ export const ROUTES = {
     mission: '/child/mission',
     character: '/child/character',
     market: '/child/market',
+    marketDetail: (itemId: number) => `/child/market/detail?itemId=${itemId}`,
+    marketPurchases: '/child/market/purchases',
     settings: '/child/settings',
   },
 } as const;
